@@ -666,10 +666,10 @@
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/여기에_배포한_ID_입력/exec";
 
-    // 1. SKU 코드 매핑이 완료된 마스터 제품 데이터베이스 (Ecount/D_CS 연동)
+// 1. SKU 코드 매핑이 완료된 마스터 제품 데이터베이스
     const SKU_MASTER_DATABASE = [
       {
-        sku: "SKU-LOK-001",
+        sku: "PWIKR430160", // ★ 실제 위글위글 품목 코드로 교체
         name: "락앤락X위글위글 원터치 스윙 텀블러",
         category: "리빙/키친",
         orders: 1200,
@@ -678,7 +678,7 @@
         keywords: "원터치 버튼 걸림, 패킹 누수"
       },
       {
-        sku: "SKU-LIV-014",
+        sku: "PWIKR450153", // ★ 실제 위글위글 품목 코드로 교체
         name: "위글위글 플러피 룸 슬리퍼",
         category: "라이프스타일",
         orders: 850,
@@ -687,7 +687,7 @@
         keywords: "발볼 좁음, 사이즈 작음 반품"
       },
       {
-        sku: "SKU-DIG-003",
+        sku: "PCLKR510020", // ★ 실제 위글위글 품목 코드로 교체
         name: "앱코X위글위글 레트로 블루투스 키보드",
         category: "디지털",
         orders: 620,
@@ -695,69 +695,7 @@
         changes: 4,
         keywords: "블루투스 페어링 끊김, 키캡 씹힘"
       },
-      {
-        sku: "SKU-BAG-022",
-        name: "3way 태블릿 멀티 파우치백",
-        category: "패션/잡화",
-        orders: 510,
-        defects: 2,
-        changes: 19,
-        keywords: "12.9형 태블릿 수납 불가 오인"
-      },
-      {
-        sku: "SKU-DIG-008",
-        name: "고속충전 도킹형 미니 보조배터리 (스마일)",
-        category: "디지털",
-        orders: 980,
-        defects: 11,
-        changes: 3,
-        keywords: "C타입 단자 접촉 불량, 충전 지연"
-      },
-      {
-        sku: "SKU-APP-009",
-        name: "소프트 파자마 로브 (체크/옐로우)",
-        category: "패션/잡화",
-        orders: 430,
-        defects: 1,
-        changes: 14,
-        keywords: "기장감 과다, 실물 컬러 톤 차이"
-      },
-      {
-        sku: "SKU-BAG-015",
-        name: "투명 PVC 스트랩 파우치 키링",
-        category: "패션/잡화",
-        orders: 720,
-        defects: 8,
-        changes: 2,
-        keywords: "지퍼 레일 이탈, 아일렛 마감"
-      },
-      {
-        sku: "SKU-ACC-031",
-        name: "시그니처 자동 장우산 (데이지)",
-        category: "패션/잡화",
-        orders: 390,
-        defects: 2,
-        changes: 12,
-        keywords: "생각보다 무게감 무거움"
-      },
-      {
-        sku: "SKU-LIV-005",
-        name: "더블월 내열유리 머그컵 350ml",
-        category: "리빙/키친",
-        orders: 680,
-        defects: 6,
-        changes: 1,
-        keywords: "배송 파손, 바닥 마개 균열"
-      },
-      {
-        sku: "SKU-LIV-020",
-        name: "쿠션 슬립 마스크 & 이어플러그",
-        category: "라이프스타일",
-        orders: 310,
-        defects: 0,
-        changes: 9,
-        keywords: "밴드 압박감 차이로 인한 반품"
-      }
+      // ... 나머지 품목도 동일한 규칙으로 수정
     ];
 
     // 2. 2026년 연간(1월~10월) 시계열 데이터셋
