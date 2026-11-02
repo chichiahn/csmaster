@@ -147,6 +147,7 @@
           <button onclick="setQuickDateRange('today')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">오늘</button>
           <button onclick="setQuickDateRange('lastWeek')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전주</button>
           <button onclick="setQuickDateRange('twoWeeksAgo')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전전주</button>
+          <button onclick="setQuickDateRange('lastMonth')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">지난달</button>
           <button onclick="setQuickDateRange('thisMonth')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">이번달</button>
           <button onclick="setQuickDateRange('all')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전체</button>
         </div>
@@ -1154,6 +1155,11 @@
         currentStartDate = '2026-10-19';
         currentEndDate = '2026-10-25';
       } 
+        else if (rangeType === 'lastMonth') {
+        // 지난달: 2026-10-01 ~ 2026-10-31
+        currentStartDate = '2026-10-01';
+        currentEndDate = '2026-10-31';
+       }
       else if (rangeType === 'thisMonth') {
         // 이번달: 2026-11-01 ~ 2026-11-30
         currentStartDate = '2026-11-01';
