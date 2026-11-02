@@ -813,7 +813,7 @@
           { rank: 5, name: "소프트 파자마 로브 - 옐로우", desc: "실물 색상 톤 차이로 인한 교환", count: "3건" }
         ]
       },
-      // 기본값 / 전체 누적 (D_CS 월간 집계)
+      // 기본값 / 전체 누적 (D_CS 연간 집계)
       "default": {
         defect: [
           { rank: 1, name: "락앤락X위글위글 원터치 스윙 텀블러", desc: "뚜껑 고무패킹 누수 및 원터치 버튼 걸림 불량", count: "14건" },
@@ -832,7 +832,7 @@
       }
     };
 
-    // 2. 기간 매핑이 포함된 시계열 데이터셋
+    // 2. 2026년 연간(1월~10월) 시계열 데이터셋
     let WEEKLY_DATA = [
       {
         week: '10월 5주',
@@ -1067,6 +1067,33 @@
         callRate: 94.0,
         channels: { cafe24: 64.0, naver: 17.0, kakao: 10.0, cm29: 7.5, others: 1.5 },
         inboundTypes: [280, 90, 72, 56, 26, 96]
+      },
+      // 1월 상반기 기준 데이터
+      {
+        week: '1월 3주',
+        startDate: '2026-01-12',
+        endDate: '2026-01-18',
+        orders: 15958,
+        refunds: 198,
+        inquiries: 962,
+        aiRate: 29.9,
+        csat: 4.88,
+        callRate: 96.5,
+        channels: { cafe24: 50.8, naver: 24.2, kakao: 14.0, cm29: 10.0, others: 1.0 },
+        inboundTypes: [220, 70, 55, 40, 20, 80]
+      },
+      {
+        week: '1월 1주',
+        startDate: '2026-01-01',
+        endDate: '2026-01-04',
+        orders: 9368,
+        refunds: 155,
+        inquiries: 621,
+        aiRate: 28.7,
+        csat: 4.86,
+        callRate: 95.5,
+        channels: { cafe24: 52.0, naver: 23.5, kakao: 13.0, cm29: 10.5, others: 1.0 },
+        inboundTypes: [150, 48, 38, 30, 15, 52]
       }
     ];
 
@@ -1113,7 +1140,7 @@
       renderAll();
     }
 
-    // 퀵 레인지 버튼 클릭 시 월~일 기준 일자 자동 세팅
+    // 퀵 레인지 버튼 클릭 시 일자 자동 세팅
     function setQuickDateRange(rangeType) {
       const now = new Date('2026-11-02'); 
       const formatDate = (d) => d.toISOString().split('T')[0];
@@ -1123,19 +1150,23 @@
         currentEndDate = formatDate(now);
       } 
       else if (rangeType === 'lastWeek') {
+        // 전주: 2026-10-26 ~ 2026-11-01
         currentStartDate = '2026-10-26';
         currentEndDate = '2026-11-01';
       } 
       else if (rangeType === 'twoWeeksAgo') {
+        // 전전주: 2026-10-19 ~ 2026-10-25
         currentStartDate = '2026-10-19';
         currentEndDate = '2026-10-25';
       } 
       else if (rangeType === 'thisMonth') {
+        // 이번달: 2026-11-01 ~ 2026-11-30
         currentStartDate = '2026-11-01';
         currentEndDate = '2026-11-30';
       } 
       else if (rangeType === 'all') {
-        currentStartDate = '2026-06-29';
+        // ★ 전체 선택 시 2026년 1월 1일부터 최신일까지 지정 ★
+        currentStartDate = '2026-01-01';
         currentEndDate = '2026-11-01';
       }
 
@@ -1218,7 +1249,7 @@
       updateOverviewTable(overlappingWeeks);
       updateOverviewCharts(overlappingWeeks);
       updateCsCharts(displayData);
-      updateCsTopLists(overlappingWeeks); // ★ TOP 5 동적 렌더링 호출
+      updateCsTopLists(overlappingWeeks);
       updateAiCharts();
       updateReviewChart();
       updateCostCharts();
@@ -1354,7 +1385,7 @@
       const tbody = document.getElementById('overviewTableBody');
       tbody.innerHTML = '';
 
-      const slice = WEEKLY_DATA.slice(0, 8);
+      const slice = WEEKLY_DATA.slice(0, 10);
 
       slice.forEach(item => {
         const isSelected = selectedWeeks.some(w => w.week === item.week);
