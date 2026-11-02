@@ -146,15 +146,14 @@
           </div>
         </div>
 
-        <!-- 우측: 퀵 필터 버튼군 (클릭 시 캘린더 시작/종료일이 해당 기간으로 즉시 세팅됨) -->
+        <!-- 우측: 퀵 필터 버튼군 (순서: 오늘 > 전주 > 전전주 > 이번달 > 전체) -->
         <div class="flex items-center gap-1 overflow-x-auto custom-scroll">
           <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Range:</span>
           <button onclick="setQuickDateRange('today')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">오늘</button>
-          <button onclick="setQuickDateRange('recent7')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">최근 7일</button>
-          <button onclick="setQuickDateRange('10월 4주')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">10월 4주</button>
-          <button onclick="setQuickDateRange('10월 3주')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">10월 3주</button>
-          <button onclick="setQuickDateRange('9월 4주')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">9월 4주</button>
-          <button onclick="setQuickDateRange('month10')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">10월 전체</button>
+          <button onclick="setQuickDateRange('lastWeek')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전주</button>
+          <button onclick="setQuickDateRange('twoWeeksAgo')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전전주</button>
+          <button onclick="setQuickDateRange('thisMonth')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">이번달</button>
+          <button onclick="setQuickDateRange('all')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전체</button>
         </div>
 
       </div>
@@ -1157,25 +1156,38 @@
       renderAll();
     }
 
-    // 퀵 레인지(버튼) 클릭 시 날짜 세팅
+    // 퀵 레인지 버튼 클릭 시 월~일 기준 일자 자동 세팅
     function setQuickDateRange(rangeType) {
+      // 1. 오늘 날짜 기준 (현재 대시보드 기준일: 2026-11-02 월요일)
+      const now = new Date('2026-11-02'); 
+      const formatDate = (d) => d.toISOString().split('T')[0];
+
       if (rangeType === 'today') {
-        currentStartDate = '2026-10-25';
-        currentEndDate = '2026-10-25';
-      } else if (rangeType === 'recent7') {
+        currentStartDate = formatDate(now);
+        currentEndDate = formatDate(now);
+      } 
+      else if (rangeType === 'lastWeek') {
+        // 전주 (월요일 ~ 일요일): 2026-10-26 ~ 2026-11-01
+        currentStartDate = '2026-10-26';
+        currentEndDate = '2026-11-01';
+      } 
+      else if (rangeType === 'twoWeeksAgo') {
+        // 전전주 (월요일 ~ 일요일): 2026-10-19 ~ 2026-10-25
         currentStartDate = '2026-10-19';
         currentEndDate = '2026-10-25';
-      } else if (rangeType === 'month10') {
-        currentStartDate = '2026-10-01';
-        currentEndDate = '2026-10-31';
-      } else {
-        const target = WEEKLY_DATA.find(d => d.week === rangeType);
-        if (target) {
-          currentStartDate = target.startDate;
-          currentEndDate = target.endDate;
-        }
+      } 
+      else if (rangeType === 'thisMonth') {
+        // 이번달: 2026-11-01 ~ 2026-11-30
+        currentStartDate = '2026-11-01';
+        currentEndDate = '2026-11-30';
+      } 
+      else if (rangeType === 'all') {
+        // 전체 누적 데이터 범위 (시작주 ~ 최신주)
+        currentStartDate = '2026-06-29';
+        currentEndDate = '2026-11-01';
       }
 
+      // 화면 인풋 캘린더와 텍스트 갱신 후 재렌더링
       document.getElementById('startDatePicker').value = currentStartDate;
       document.getElementById('endDatePicker').value = currentEndDate;
       renderAll();
