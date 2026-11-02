@@ -130,11 +130,6 @@
             </button>
           </div>
 
-          <!-- 상태 뱃지 (선택된 일수 / 주차 매핑) -->
-          <div class="flex items-center text-slate-600 font-medium gap-1 bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-            <span id="dateRangeText" class="font-bold text-slate-800">2026.10.19 ~ 2026.10.25</span>
-            <span id="dateSpanBadge" class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded-full ml-1">7일간</span>
-          </div>
 
           <!-- 구글 시트 수동 동기화 버튼 -->
           <div class="flex items-center gap-1.5 pl-1">
@@ -148,7 +143,7 @@
 
         <!-- 우측: 퀵 필터 버튼군 (순서: 오늘 > 전주 > 전전주 > 이번달 > 전체) -->
         <div class="flex items-center gap-1 overflow-x-auto custom-scroll">
-          <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Range:</span>
+          <span class="text-[11px] text-slate-400 font-semibold mr-1">빠른조회:</span>
           <button onclick="setQuickDateRange('today')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">오늘</button>
           <button onclick="setQuickDateRange('lastWeek')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전주</button>
           <button onclick="setQuickDateRange('twoWeeksAgo')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전전주</button>
@@ -1182,8 +1177,10 @@
       const diffTime = Math.abs(d2 - d1);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      document.getElementById('dateRangeText').textContent = `${currentStartDate.replace(/-/g, '.')} ~ ${currentEndDate.replace(/-/g, '.')}`;
-      document.getElementById('dateSpanBadge').textContent = `${diffDays}일간`;
+      const dateRangeEl = document.getElementById('dateRangeText');
+      const dateSpanEl = document.getElementById('dateSpanBadge');
+      if (dateRangeEl) dateRangeEl.textContent = `${currentStartDate.replace(/-/g, '.')} ~ ${currentEndDate.replace(/-/g, '.')}`;
+      if (dateSpanEl) dateSpanEl.textContent = `${diffDays}일간`;
 
       // 선택된 기간과 겹치는(Overlap) 주차 데이터 필터링
       const overlappingWeeks = WEEKLY_DATA.filter(item => {
