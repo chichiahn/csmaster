@@ -698,7 +698,7 @@
       // ... 나머지 품목도 동일한 규칙으로 수정
     ];
 
-    // 2. 2026년 연간(1월~10월) 시계열 데이터셋
+// 2. 스프레드시트 로우데이터 기반 주차별 실제 실적 데이터셋 (주문/환불/인입/전화/응대율/CSAT)
     let WEEKLY_DATA = [
       {
         week: '10월 5주',
@@ -706,23 +706,29 @@
         endDate: '2026-11-01',
         orders: 7632,
         refunds: 128,
-        inquiries: 582,
-        aiRate: 43.1,
-        csat: 4.62,
-        callRate: 98.2,
+        inquiries: 613, // 게시판 17 + 채팅 509 + 전화 87
+        chatInbound: 509,
+        callInbound: 87,
+        callAnswered: 87,
+        callRate: 100.0,
+        aiRate: 28.1,
+        csat: 5.00,
         channels: { cafe24: 51.8, naver: 22.5, kakao: 12.3, cm29: 11.2, others: 2.2 },
-        inboundTypes: [138, 41, 33, 26, 12, 44]
+        inboundTypes: [142, 40, 31, 26, 12, 43]
       },
       {
         week: '10월 4주',
         startDate: '2026-10-19',
         endDate: '2026-10-25',
         orders: 8020,
-        refunds: 109,
-        inquiries: 605,
+        refunds: 110,
+        inquiries: 605, // 게시판 10 + 채팅 527 + 전화 68
+        chatInbound: 527,
+        callInbound: 68,
+        callAnswered: 66,
+        callRate: 97.1,
         aiRate: 42.9,
         csat: 4.50,
-        callRate: 97.1,
         channels: { cafe24: 52.6, naver: 22.2, kakao: 12.0, cm29: 11.3, others: 1.9 },
         inboundTypes: [144, 43, 35, 28, 10, 47]
       },
@@ -731,11 +737,14 @@
         startDate: '2026-10-12',
         endDate: '2026-10-18',
         orders: 6015,
-        refunds: 106,
-        inquiries: 485,
+        refunds: 105,
+        inquiries: 485, // 게시판 4 + 채팅 410 + 전화 71
+        chatInbound: 410,
+        callInbound: 71,
+        callAnswered: 71,
+        callRate: 100.0,
         aiRate: 41.5,
         csat: 4.95,
-        callRate: 98.0,
         channels: { cafe24: 49.2, naver: 24.1, kakao: 14.2, cm29: 10.5, others: 2.0 },
         inboundTypes: [118, 38, 29, 21, 9, 39]
       },
@@ -745,10 +754,13 @@
         endDate: '2026-10-11',
         orders: 5668,
         refunds: 93,
-        inquiries: 450,
-        aiRate: 39.8,
-        csat: 4.91,
-        callRate: 96.9,
+        inquiries: 445, // 게시판 7 + 채팅 386 + 전화 52
+        chatInbound: 386,
+        callInbound: 52,
+        callAnswered: 50,
+        callRate: 96.2,
+        aiRate: 39.4,
+        csat: 5.00,
         channels: { cafe24: 53.0, naver: 21.8, kakao: 11.9, cm29: 11.5, others: 1.8 },
         inboundTypes: [105, 34, 25, 20, 8, 38]
       },
@@ -757,11 +769,14 @@
         startDate: '2026-09-28',
         endDate: '2026-10-04',
         orders: 5626,
-        refunds: 107,
-        inquiries: 462,
-        aiRate: 38.6,
-        csat: 4.88,
-        callRate: 97.5,
+        refunds: 108,
+        inquiries: 488, // 게시판 25 + 채팅 382 + 전화 81
+        chatInbound: 382,
+        callInbound: 81,
+        callAnswered: 76,
+        callRate: 93.8,
+        aiRate: 37.7,
+        csat: 4.24,
         channels: { cafe24: 50.4, naver: 23.0, kakao: 13.5, cm29: 11.1, others: 2.0 },
         inboundTypes: [110, 36, 27, 22, 11, 40]
       },
@@ -770,11 +785,14 @@
         startDate: '2026-09-21',
         endDate: '2026-09-27',
         orders: 5238,
-        refunds: 160,
-        inquiries: 512,
+        refunds: 159,
+        inquiries: 414, // 게시판 31 + 채팅 327 + 전화 56
+        chatInbound: 327,
+        callInbound: 56,
+        callAnswered: 56,
+        callRate: 100.0,
         aiRate: 35.5,
-        csat: 4.82,
-        callRate: 96.4,
+        csat: 4.46,
         channels: { cafe24: 48.5, naver: 24.5, kakao: 13.0, cm29: 12.0, others: 2.0 },
         inboundTypes: [120, 39, 31, 25, 14, 45]
       },
@@ -784,10 +802,13 @@
         endDate: '2026-09-20',
         orders: 9689,
         refunds: 176,
-        inquiries: 690,
-        aiRate: 36.2,
-        csat: 4.79,
-        callRate: 95.8,
+        inquiries: 753, // 게시판 34 + 채팅 625 + 전화 94
+        chatInbound: 625,
+        callInbound: 94,
+        callAnswered: 91,
+        callRate: 96.8,
+        aiRate: 35.5,
+        csat: 4.72,
         channels: { cafe24: 56.1, naver: 20.3, kakao: 11.5, cm29: 10.2, others: 1.9 },
         inboundTypes: [165, 52, 42, 34, 18, 55]
       },
@@ -796,11 +817,14 @@
         startDate: '2026-09-07',
         endDate: '2026-09-13',
         orders: 7616,
-        refunds: 124,
-        inquiries: 540,
-        aiRate: 37.0,
-        csat: 4.85,
-        callRate: 96.2,
+        refunds: 123,
+        inquiries: 476, // 게시판 25 + 채팅 375 + 전화 76
+        chatInbound: 375,
+        callInbound: 76,
+        callAnswered: 76,
+        callRate: 100.0,
+        aiRate: 36.0,
+        csat: 4.50,
         channels: { cafe24: 52.0, naver: 22.0, kakao: 12.5, cm29: 11.5, others: 2.0 },
         inboundTypes: [130, 40, 32, 24, 12, 42]
       },
@@ -810,28 +834,257 @@
         endDate: '2026-09-06',
         orders: 6827,
         refunds: 92,
-        inquiries: 480,
-        aiRate: 36.5,
-        csat: 4.84,
-        callRate: 96.8,
+        inquiries: 550, // 게시판 12 + 채팅 459 + 전화 79
+        chatInbound: 459,
+        callInbound: 79,
+        callAnswered: 76,
+        callRate: 96.2,
+        aiRate: 31.8,
+        csat: 4.59,
         channels: { cafe24: 51.5, naver: 23.2, kakao: 12.0, cm29: 11.3, others: 2.0 },
         inboundTypes: [115, 36, 28, 22, 10, 39]
       },
       {
-        week: '1월 1주',
-        startDate: '2026-01-01',
-        endDate: '2026-01-04',
+        week: '8월 5주',
+        startDate: '2026-08-24',
+        endDate: '2026-08-30',
+        orders: 8505,
+        refunds: 138,
+        inquiries: 560, // 게시판 9 + 채팅 462 + 전화 89
+        chatInbound: 462,
+        callInbound: 89,
+        callAnswered: 86,
+        callRate: 96.6,
+        aiRate: 28.1,
+        csat: 4.78,
+        channels: { cafe24: 54.0, naver: 21.5, kakao: 12.2, cm29: 10.5, others: 1.8 },
+        inboundTypes: [142, 44, 35, 27, 13, 48]
+      },
+      {
+        week: '8월 4주',
+        startDate: '2026-08-17',
+        endDate: '2026-08-23',
+        orders: 7093,
+        refunds: 161,
+        inquiries: 560, // 게시판 3 + 채팅 476 + 전화 81
+        chatInbound: 476,
+        callInbound: 81,
+        callAnswered: 80,
+        callRate: 98.8,
+        aiRate: 26.1,
+        csat: 4.59,
+        channels: { cafe24: 52.8, naver: 22.1, kakao: 11.9, cm29: 11.2, others: 2.0 },
+        inboundTypes: [125, 41, 31, 24, 11, 43]
+      },
+      {
+        week: '8월 3주',
+        startDate: '2026-08-10',
+        endDate: '2026-08-16',
+        orders: 9429,
+        refunds: 107,
+        inquiries: 527, // 게시판 4 + 채팅 428 + 전화 95
+        chatInbound: 428,
+        callInbound: 95,
+        callAnswered: 91,
+        callRate: 95.8,
+        aiRate: 18.2,
+        csat: 4.29,
+        channels: { cafe24: 55.4, naver: 20.8, kakao: 11.6, cm29: 10.4, others: 1.8 },
+        inboundTypes: [150, 48, 38, 30, 15, 52]
+      },
+      {
+        week: '8월 2주',
+        startDate: '2026-08-03',
+        endDate: '2026-08-09',
+        orders: 5687,
+        refunds: 101,
+        inquiries: 447, // 게시판 7 + 채팅 355 + 전화 85
+        chatInbound: 355,
+        callInbound: 85,
+        callAnswered: 76,
+        callRate: 89.4,
+        aiRate: 16.9,
+        csat: 4.64,
+        channels: { cafe24: 51.0, naver: 23.5, kakao: 12.5, cm29: 11.0, others: 2.0 },
+        inboundTypes: [108, 33, 26, 19, 9, 36]
+      },
+      {
+        week: '7월 5주',
+        startDate: '2026-07-27',
+        endDate: '2026-08-02',
+        orders: 7396,
+        refunds: 241,
+        inquiries: 757, // 게시판 26 + 채팅 580 + 전화 151
+        chatInbound: 580,
+        callInbound: 151,
+        callAnswered: 142,
+        callRate: 94.0,
+        aiRate: 10.0,
+        csat: 4.81,
+        channels: { cafe24: 50.0, naver: 22.0, kakao: 13.0, cm29: 12.0, others: 3.0 },
+        inboundTypes: [145, 46, 36, 29, 14, 50]
+      },
+      {
+        week: '7월 4주',
+        startDate: '2026-07-20',
+        endDate: '2026-07-26',
+        orders: 24866,
+        refunds: 257,
+        inquiries: 1673, // 게시판 25 + 채팅 1361 + 전화 287
+        chatInbound: 1361,
+        callInbound: 287,
+        callAnswered: 258,
+        callRate: 89.9,
+        aiRate: 21.1,
+        csat: 4.63,
+        channels: { cafe24: 68.2, naver: 15.4, kakao: 8.8, cm29: 6.5, others: 1.1 },
+        inboundTypes: [350, 110, 85, 68, 32, 115]
+      },
+      {
+        week: '7월 3주',
+        startDate: '2026-07-13',
+        endDate: '2026-07-19',
+        orders: 6297,
+        refunds: 140,
+        inquiries: 569, // 게시판 25 + 채팅 452 + 전화 92
+        chatInbound: 452,
+        callInbound: 92,
+        callAnswered: 88,
+        callRate: 95.7,
+        aiRate: 32.1,
+        csat: 4.68,
+        channels: { cafe24: 53.0, naver: 22.0, kakao: 12.0, cm29: 11.0, others: 2.0 },
+        inboundTypes: [122, 38, 30, 23, 11, 41]
+      },
+      {
+        week: '7월 2주',
+        startDate: '2026-07-06',
+        endDate: '2026-07-12',
+        orders: 10443,
+        refunds: 134,
+        inquiries: 801, // 게시판 63 + 채팅 612 + 전화 126
+        chatInbound: 612,
+        callInbound: 126,
+        callAnswered: 103,
+        callRate: 81.7,
+        aiRate: 18.3,
+        csat: 4.67,
+        channels: { cafe24: 57.0, naver: 20.0, kakao: 11.5, cm29: 9.8, others: 1.7 },
+        inboundTypes: [175, 55, 44, 35, 17, 58]
+      },
+      {
+        week: '7월 1주',
+        startDate: '2026-06-29',
+        endDate: '2026-07-05',
+        orders: 19700,
+        refunds: 152,
+        inquiries: 784, // 게시판 328 + 채팅 354 + 전화 102
+        chatInbound: 354,
+        callInbound: 102,
+        callAnswered: 98,
+        callRate: 96.1,
+        aiRate: 21.5,
+        csat: 4.47,
+        channels: { cafe24: 64.0, naver: 17.0, kakao: 10.0, cm29: 7.5, others: 1.5 },
+        inboundTypes: [280, 90, 72, 56, 26, 96]
+      },
+      {
+        week: '6월 4주',
+        startDate: '2026-06-22',
+        endDate: '2026-06-28',
+        orders: 8109,
+        refunds: 173,
+        inquiries: 733, // 게시판 355 + 채팅 267 + 전화 111
+        chatInbound: 267,
+        callInbound: 111,
+        callAnswered: 101,
+        callRate: 91.0,
+        aiRate: 27.3,
+        csat: 4.38,
+        channels: { cafe24: 52.0, naver: 22.0, kakao: 12.0, cm29: 11.5, others: 2.5 },
+        inboundTypes: [130, 42, 35, 27, 13, 45]
+      },
+      {
+        week: '6월 3주',
+        startDate: '2026-06-15',
+        endDate: '2026-06-21',
+        orders: 8200,
+        refunds: 201,
+        inquiries: 861, // 게시판 343 + 채팅 387 + 전화 131
+        chatInbound: 387,
+        callInbound: 131,
+        callAnswered: 127,
+        callRate: 96.9,
+        aiRate: 21.2,
+        csat: 4.50,
+        channels: { cafe24: 53.0, naver: 21.5, kakao: 12.5, cm29: 11.0, others: 2.0 },
+        inboundTypes: [140, 45, 38, 29, 14, 48]
+      },
+      {
+        week: '6월 2주',
+        startDate: '2026-06-08',
+        endDate: '2026-06-14',
+        orders: 7657,
+        refunds: 247,
+        inquiries: 1088, // 게시판 525 + 채팅 366 + 전화 197
+        chatInbound: 366,
+        callInbound: 197,
+        callAnswered: 183,
+        callRate: 92.9,
+        aiRate: 18.9,
+        csat: 4.50,
+        channels: { cafe24: 51.0, naver: 23.0, kakao: 13.0, cm29: 11.0, others: 2.0 },
+        inboundTypes: [155, 50, 42, 33, 16, 52]
+      },
+      {
+        week: '2월 5주',
+        startDate: '2026-02-23',
+        endDate: '2026-03-01',
+        orders: 30700,
+        refunds: 382,
+        inquiries: 2670, // 게시판 1133 + 채팅 538 + 전화 999
+        chatInbound: 538,
+        callInbound: 999,
+        callAnswered: 536,
+        callRate: 53.7, // 프로모션 폭증으로 응대율 53.7% 기록
+        aiRate: 39.2,
+        csat: 4.88,
+        channels: { cafe24: 65.0, naver: 18.0, kakao: 9.0, cm29: 7.0, others: 1.0 },
+        inboundTypes: [380, 120, 95, 75, 36, 120]
+      },
+      {
+        week: '1월 3주',
+        startDate: '2026-01-12',
+        endDate: '2026-01-18',
+        orders: 15958,
+        refunds: 198,
+        inquiries: 962, // 게시판 381 + 채팅 280 + 전화 301
+        chatInbound: 280,
+        callInbound: 301,
+        callAnswered: 205,
+        callRate: 68.1,
+        aiRate: 32.5,
+        csat: 4.88,
+        channels: { cafe24: 50.8, naver: 24.2, kakao: 14.0, cm29: 10.0, others: 1.0 },
+        inboundTypes: [220, 70, 55, 40, 20, 80]
+      },
+      {
+        week: '1월 2주',
+        startDate: '2026-01-05',
+        endDate: '2026-01-11',
         orders: 9368,
         refunds: 155,
-        inquiries: 621,
-        aiRate: 28.7,
+        inquiries: 988, // 게시판 367 + 채팅 254 + 전화 367
+        chatInbound: 254,
+        callInbound: 367,
+        callAnswered: 241,
+        callRate: 65.7,
+        aiRate: 29.9,
         csat: 4.86,
-        callRate: 95.5,
         channels: { cafe24: 52.0, naver: 23.5, kakao: 13.0, cm29: 10.5, others: 1.0 },
         inboundTypes: [150, 48, 38, 30, 15, 52]
       }
     ];
-
     let currentStartDate = '2026-10-19';
     let currentEndDate = '2026-10-25';
 
@@ -1218,9 +1471,9 @@
       document.getElementById('kpi-call-rate').textContent = curr.callRate + '%';
 
       // CS & Inquiry 탭 서브 카드 수치
-      const chatInbound = Math.round(curr.inquiries * 0.87);
-      const callInbound = curr.inquiries - chatInbound;
-      const answeredCalls = Math.round(callInbound * (curr.callRate / 100));
+      const chatInbound = curr.chatInbound || Math.round(curr.inquiries * 0.85);
+      const callInbound = curr.callInbound || (curr.inquiries - chatInbound);
+      const answeredCalls = curr.callAnswered || Math.round(callInbound * (curr.callRate / 100));
       document.getElementById('cs-chat-inbound').innerHTML = `${chatInbound.toLocaleString()}<span class="text-xs font-normal text-slate-400 ml-1">건</span>`;
       document.getElementById('cs-call-inbound').innerHTML = `${callInbound.toLocaleString()}<span class="text-xs font-normal text-slate-400 ml-1">건</span>`;
       document.getElementById('cs-call-answered').textContent = `${answeredCalls.toLocaleString()}건 완료 (응대율 ${curr.callRate}%)`;
