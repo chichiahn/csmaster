@@ -83,13 +83,16 @@
           </div>
         </div>
 
-        <!-- Tab Buttons -->
+        <!-- Tab Buttons (CS & Inquiry 오른쪽에 CS 탭 신설) -->
         <nav class="flex items-center space-x-1 overflow-x-auto custom-scroll pb-1 md:pb-0" id="tabButtons">
           <button onclick="switchTab('db')" id="tab-db" class="tab-btn px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-1.5 bg-slate-900 text-white shadow-xs">
             <span>📊</span> DashBoard
           </button>
-          <button onclick="switchTab('cs')" id="tab-cs" class="tab-btn px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-600 hover:bg-slate-100">
+          <button onclick="switchTab('inquiry')" id="tab-inquiry" class="tab-btn px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-600 hover:bg-slate-100">
             <span>👩🏻</span> CS & Inquiry
+          </button>
+          <button onclick="switchTab('cs')" id="tab-cs" class="tab-btn px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-600 hover:bg-slate-100">
+            <span>📦</span> CS
           </button>
           <button onclick="switchTab('ai')" id="tab-ai" class="tab-btn px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-600 hover:bg-slate-100">
             <span>⚙️</span> AI
@@ -108,28 +111,19 @@
         
         <!-- 좌측: 자유 시작일 ~ 종료일 캘린더 선택기 및 동기화 버튼 -->
         <div class="flex items-center flex-wrap gap-2">
-          
           <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
             <span class="text-slate-500 font-bold px-2 flex items-center gap-1 text-[11px]">
               <i class="fa-regular fa-calendar-days text-rose-500"></i>조회기간:
             </span>
-            
-            <!-- 시작일자 선택 -->
             <input type="date" id="startDatePicker" onchange="onCustomDateChange()" 
                    class="bg-white font-semibold text-slate-800 text-xs py-1 px-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer shadow-2xs">
-            
             <span class="text-slate-400 font-bold px-1.5">~</span>
-            
-            <!-- 종료일자 선택 -->
             <input type="date" id="endDatePicker" onchange="onCustomDateChange()" 
                    class="bg-white font-semibold text-slate-800 text-xs py-1 px-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer shadow-2xs">
-            
-            <!-- 기간 적용 버튼 -->
             <button onclick="onCustomDateChange()" class="ml-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg transition text-[11px] shadow-2xs cursor-pointer">
               조회
             </button>
           </div>
-
 
           <!-- 구글 시트 수동 동기화 버튼 -->
           <div class="flex items-center gap-1.5 pl-1">
@@ -141,9 +135,9 @@
           </div>
         </div>
 
-        <!-- 우측: 퀵 필터 버튼군 (순서: 오늘 > 전주 > 전전주 > 이번달 > 전체) -->
+        <!-- 우측: 퀵 필터 버튼군 -->
         <div class="flex items-center gap-1 overflow-x-auto custom-scroll">
-          <span class="text-[11px] text-slate-400 font-semibold mr-1">빠른조회:</span>
+          <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Range:</span>
           <button onclick="setQuickDateRange('today')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">오늘</button>
           <button onclick="setQuickDateRange('lastWeek')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전주</button>
           <button onclick="setQuickDateRange('twoWeeksAgo')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전전주</button>
@@ -165,8 +159,6 @@
 
       <!-- 6대 동적 KPI 카드 그리드 -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
-        
-        <!-- 1. 주문 건수 -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>주문건수</span>
@@ -181,7 +173,6 @@
           </div>
         </div>
 
-        <!-- 2. 총 문의 인입 (채팅+유선) -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>Inquiry 인입</span>
@@ -196,7 +187,6 @@
           </div>
         </div>
 
-        <!-- 3. IPO (Inquiry Per Order) -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>IPO (인입률)</span>
@@ -211,7 +201,6 @@
           </div>
         </div>
 
-        <!-- 4. 환불률 (CLR) -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>환불률 (CLR)</span>
@@ -226,7 +215,6 @@
           </div>
         </div>
 
-        <!-- 5. AI 전체해결률 -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>AI 전체해결률</span>
@@ -241,10 +229,9 @@
           </div>
         </div>
 
-        <!-- 6. CSAT 고객만족도 -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span>CSAT 만족도</span>
+            <span>CSAT 고객만족도</span>
             <i class="fa-solid fa-star text-amber-400"></i>
           </div>
           <div class="mt-2 flex items-baseline gap-1">
@@ -255,13 +242,10 @@
             <span>전화응대율 <strong id="kpi-call-rate" class="text-slate-700">97.1%</strong></span>
           </div>
         </div>
-
       </div>
 
       <!-- 동적 차트 영역 1: 주문 및 인입 추이 + 채널 분포 -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- 주문 vs 인입 추이 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs lg:col-span-2">
           <div class="flex items-center justify-between mb-4">
             <div>
@@ -278,25 +262,22 @@
           </div>
         </div>
 
-        <!-- 선택 기간 채널별 주문 점유율 도넛 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <div class="flex items-center justify-between mb-2">
             <div>
               <h4 class="font-bold text-slate-800 text-sm md:text-base">채널별 주문 점유율</h4>
-              <p class="text-xs text-slate-400 mt-0.5" id="channelChartSub">선택된 기간의 판매 채널 비중</p>
+              <p class="text-xs text-slate-400 mt-0.5">선택된 기간의 판매 채널 비중</p>
             </div>
           </div>
           <div class="h-56 relative flex items-center justify-center">
             <canvas id="chart-overview-channel"></canvas>
           </div>
           <div class="grid grid-cols-3 gap-2 mt-2 pt-3 border-t border-slate-100 text-center" id="channelStatsMini">
-            <!-- JS 동적 업데이트 -->
           </div>
         </div>
-
       </div>
 
-      <!-- 선택 기간을 포함한 상세 성과 데이터 테이블 -->
+      <!-- 상세 성과 데이터 테이블 -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -323,7 +304,6 @@
               </tr>
             </thead>
             <tbody id="overviewTableBody" class="divide-y divide-slate-100 text-slate-700">
-              <!-- JS 동적 렌더링 -->
             </tbody>
           </table>
         </div>
@@ -331,10 +311,8 @@
 
     </div>
 
-    <!-- 2. CS & 클레임 분석 (TAB: CS) -->
-    <div id="content-cs" class="tab-content hidden space-y-6">
-      
-      <!-- 인입 채널별 & 클레임 유형 카드 -->
+    <!-- 2. CS & Inquiry (상담 문의 인입/채널 운영 분석) -->
+    <div id="content-inquiry" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
           <p class="text-xs text-slate-500 font-medium">채팅 인입 (ChannelTalk)</p>
@@ -358,7 +336,6 @@
         </div>
       </div>
 
-      <!-- 차트 2개: 인쿼리 분류 비중 + 실 클레임 유형 비중 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">Inquiry 문의 유형 분포 (Inbound Category)</h4>
@@ -376,48 +353,155 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 클레임 상품 TOP 5 (불량 vs 변심) 동적 컨테이너 -->
+    <!-- 3. [신설] CS 탭 (품질 불량 & 단순 변심 심층 분석 및 SKU 검색) -->
+    <div id="content-cs" class="tab-content hidden space-y-6">
+      
+      <!-- 상품명 앞글자 자동완성 및 SKU 코드 검색 필터 바 -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </div>
+            <input type="text" id="skuSearchInput" oninput="onProductSearchInput(this.value)" placeholder="제품명 앞글자 또는 SKU 코드 입력... (예: 락앤, 기계식, SKU-)" 
+                   autocomplete="off"
+                   class="w-full pl-9 pr-9 py-2 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium text-slate-800 transition">
+            <button onclick="clearSkuSearch()" id="skuSearchClearBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+
+            <!-- 자동완성 드롭다운 레이어 -->
+            <div id="skuAutocompleteDropdown" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-100 custom-scroll text-xs">
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <select id="csCategoryFilter" onchange="filterSkuTable()" class="bg-slate-50 border border-slate-200 text-xs font-semibold rounded-xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-700">
+              <option value="ALL">전체 카테고리</option>
+              <option value="디지털">디지털</option>
+              <option value="리빙/키친">리빙/키친</option>
+              <option value="라이프스타일">라이프스타일</option>
+              <option value="패션/잡화">패션/잡화</option>
+            </select>
+            <button onclick="clearSkuSearch()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+              초기화
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 신설 CS 분석 3대 KPI 카드 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 card-hover shadow-2xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>🚨 분석 기간 품질 불량률</span>
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-1.5">
+            <h3 id="csTabDefectRate" class="text-3xl font-black text-rose-600">1.48</h3>
+            <span class="text-sm font-bold text-rose-500">%</span>
+          </div>
+          <p id="csTabDefectCount" class="text-xs text-slate-400 mt-2 font-medium">총 출고 대비 119건 품질 하자 발생</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 card-hover shadow-2xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>🔄 분석 기간 단순변심률</span>
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-1.5">
+            <h3 id="csTabChangeRate" class="text-3xl font-black text-amber-500">4.32</h3>
+            <span class="text-sm font-bold text-amber-500">%</span>
+          </div>
+          <p id="csTabChangeCount" class="text-xs text-slate-400 mt-2 font-medium">총 출고 대비 346건 단순 변심 반품</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 card-hover shadow-2xs">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>📦 관리 대상 SKU 총계</span>
+            <i class="fa-solid fa-barcode text-slate-400"></i>
+          </div>
+          <div class="mt-2 flex items-baseline gap-1.5">
+            <h3 class="text-3xl font-black text-slate-900">18</h3>
+            <span class="text-sm font-bold text-slate-400">개 품목</span>
+          </div>
+          <p class="text-xs text-emerald-600 mt-2 font-medium">Ecount 로우데이터 매칭 완료</p>
+        </div>
+      </div>
+
+      <!-- 품질 불량 TOP 5 & 단순변심 TOP 5 심층 섹션 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- 불량 이슈 상품 리스트 -->
+        <!-- 품질 불량 CS 접수 TOP 5 -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
           <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-rose-500"></span>
               <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량 CS 접수 TOP 5</h4>
             </div>
-            <span id="defectBadge" class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">QC/공정 점검 요망</span>
+            <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">QC/공정 점검 요망</span>
           </div>
-          <!-- JS 동적 렌더링 컨테이너 -->
-          <div id="defectTopList" class="divide-y divide-slate-100 text-xs sm:text-sm">
+          <div id="csTabDefectList" class="divide-y divide-slate-100 text-xs sm:text-sm">
           </div>
         </div>
 
-        <!-- 변심/상세페이지 이슈 상품 리스트 -->
+        <!-- 단순변심 반품/교환 TOP 5 -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
           <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-amber-500"></span>
               <h4 class="font-bold text-slate-800 text-sm md:text-base">단순변심 반품/교환 TOP 5</h4>
             </div>
-            <span id="changeBadge" class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md">상세페이지 보완</span>
+            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md">상세페이지 보완</span>
           </div>
-          <!-- JS 동적 렌더링 컨테이너 -->
-          <div id="changeTopList" class="divide-y divide-slate-100 text-xs sm:text-sm">
+          <div id="csTabChangeList" class="divide-y divide-slate-100 text-xs sm:text-sm">
           </div>
         </div>
 
       </div>
 
+      <!-- SKU 코드 매칭 제품별 클레임/출고 상세 분석 데이터 테이블 -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+              <i class="fa-solid fa-table-list text-rose-500"></i>
+              <span>SKU별 클레임 상세 분석 테이블 (출고 대비 불량/변심률)</span>
+            </h4>
+            <p class="text-xs text-slate-400 mt-0.5">품목별 SKU 코드와 로우데이터 수량 연동 분석</p>
+          </div>
+          <span id="skuTableResultCount" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+            전체 10개 품목 표시 중
+          </span>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">SKU 코드</th>
+                <th class="py-3 px-4">대표 상품명</th>
+                <th class="py-3 px-4">카테고리</th>
+                <th class="py-3 px-4 text-right">출고수량</th>
+                <th class="py-3 px-4 text-right">품질불량</th>
+                <th class="py-3 px-4 text-right">불량률</th>
+                <th class="py-3 px-4 text-right">단순변심</th>
+                <th class="py-3 px-4 text-right">변심률</th>
+                <th class="py-3 px-4">주요 불만 원인 키워드</th>
+              </tr>
+            </thead>
+            <tbody id="skuTableBody" class="divide-y divide-slate-100 text-slate-700">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
 
-    <!-- 3. AI 상담 성과 (TAB: AI) -->
+    <!-- 4. AI 상담 성과 (TAB: AI) -->
     <div id="content-ai" class="tab-content hidden space-y-6">
-      
-      <!-- AI 3대 핵심 성과 카드 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs relative overflow-hidden">
           <p class="text-xs font-bold uppercase tracking-wider text-slate-400">1. AI 관여율 (Engagement Rate)</p>
           <div class="flex items-baseline gap-2 mt-2">
@@ -453,10 +537,8 @@
             <div id="ai-bar-total" class="bg-purple-600 h-full rounded-full transition-all duration-500" style="width: 42.9%"></div>
           </div>
         </div>
-
       </div>
 
-      <!-- AI 차트 2개: 주차별 해결률 추이 + 시나리오별 성과 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">주차별 AI 전체 해결률 추이 (Goal: 40%)</h4>
@@ -474,69 +556,10 @@
           </div>
         </div>
       </div>
-
-      <!-- AI 인텐트(시나리오) 상세 테이블 -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h4 class="font-bold text-slate-800 text-base">주요 챗봇 시나리오별 처리 성능 및 호전환(이관) 현황</h4>
-          <span class="text-xs text-slate-400">채널톡 봇 데이터 연동</span>
-        </div>
-        <div class="overflow-x-auto custom-scroll">
-          <table class="w-full text-left text-xs sm:text-sm">
-            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-              <tr>
-                <th class="py-3 px-4">시나리오 (인텐트)</th>
-                <th class="py-3 px-4 text-right">인입 건수</th>
-                <th class="py-3 px-4 text-right">AI 자체해결</th>
-                <th class="py-3 px-4 text-right">해결률 (%)</th>
-                <th class="py-3 px-4 text-right">상담원 연결</th>
-                <th class="py-3 px-4 text-center">개선 우선순위</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">배송 조회 및 송장 번호 안내</td>
-                <td class="py-3 px-4 text-right">112건</td>
-                <td class="py-3 px-4 text-right text-emerald-600 font-bold">106건</td>
-                <td class="py-3 px-4 text-right font-black">94.6%</td>
-                <td class="py-3 px-4 text-right text-slate-400">6건</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold text-[11px]">안정 유지</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">인기 품절 상품 재입고 일정</td>
-                <td class="py-3 px-4 text-right">68건</td>
-                <td class="py-3 px-4 text-right text-emerald-600 font-bold">62건</td>
-                <td class="py-3 px-4 text-right font-black">91.2%</td>
-                <td class="py-3 px-4 text-right text-slate-400">6건</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold text-[11px]">안정 유지</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">교환/반품 배송비 입금 안내</td>
-                <td class="py-3 px-4 text-right">45건</td>
-                <td class="py-3 px-4 text-right text-blue-600 font-bold">38건</td>
-                <td class="py-3 px-4 text-right font-black">84.4%</td>
-                <td class="py-3 px-4 text-right text-slate-500">7건</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold text-[11px]">우수</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">전자기기/기계식 키보드 블루투스 페어링 가이드</td>
-                <td class="py-3 px-4 text-right">34건</td>
-                <td class="py-3 px-4 text-right text-amber-600 font-bold">20건</td>
-                <td class="py-3 px-4 text-right font-black">58.8%</td>
-                <td class="py-3 px-4 text-right text-rose-500 font-bold">14건</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold text-[11px]">1순위 개선</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
 
-    <!-- 4. 리뷰 및 품질 분석 (TAB: REVIEW) -->
+    <!-- 5. 리뷰 및 품질 분석 (TAB: REVIEW) -->
     <div id="content-review" class="tab-content hidden space-y-6">
-      
-      <!-- 리뷰 4대 KPI -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
           <p class="text-xs text-slate-500 font-medium">전체 평균 평점</p>
@@ -565,7 +588,6 @@
         </div>
       </div>
 
-      <!-- 월별 평점 및 부정 리뷰율 추이 -->
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <h4 class="font-bold text-slate-800 text-base mb-1">월별 리뷰 평점 & 부정리뷰율 추이 (1월 ~ 10월)</h4>
         <p class="text-xs text-slate-400 mb-4">품질 개선 캠페인 진행 후 3.8%에서 2.47%로 부정리뷰 하향 안정화</p>
@@ -573,81 +595,10 @@
           <canvas id="chart-review-monthly"></canvas>
         </div>
       </div>
-
-      <!-- 부정리뷰율 상위 주의 상품 리스트 -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
-              <span class="text-rose-500">⚠️</span> 부정리뷰 발생 비중 상위 상품 관리 리스트
-            </h4>
-            <p class="text-xs text-slate-400 mt-0.5">리뷰 수 15건 이상 상품 중 1~2점 부정 평가 비중 상위 품목</p>
-          </div>
-          <div class="w-full sm:w-60">
-            <input type="text" id="reviewFilterInput" onkeyup="filterReviewItems()" placeholder="상품명 또는 키워드 검색..." class="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-rose-400">
-          </div>
-        </div>
-        <div class="overflow-x-auto custom-scroll">
-          <table class="w-full text-left text-xs sm:text-sm">
-            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-              <tr>
-                <th class="py-3 px-4">상품명</th>
-                <th class="py-3 px-4 text-right">총 리뷰수</th>
-                <th class="py-3 px-4 text-right">부정 리뷰수</th>
-                <th class="py-3 px-4 text-right">부정리뷰율</th>
-                <th class="py-3 px-4 text-right">평균 평점</th>
-                <th class="py-3 px-4">주요 고객 불만 키워드</th>
-                <th class="py-3 px-4 text-center">조치 현황</th>
-              </tr>
-            </thead>
-            <tbody id="reviewTableBody" class="divide-y divide-slate-100 text-slate-700">
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">클래식 전자 스톱워치 (레트로 옐로우)</td>
-                <td class="py-3 px-4 text-right">18건</td>
-                <td class="py-3 px-4 text-right text-rose-600 font-bold">6건</td>
-                <td class="py-3 px-4 text-right font-black text-rose-600">33.3%</td>
-                <td class="py-3 px-4 text-right text-amber-500 font-bold">3.40</td>
-                <td class="py-3 px-4 text-slate-500">버튼 뻑뻑함, 알람 소리 작음</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold text-[11px]">생산라인 점검</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">미니 PVC 투명 파우치 (체크)</td>
-                <td class="py-3 px-4 text-right">25건</td>
-                <td class="py-3 px-4 text-right text-rose-600 font-bold">5건</td>
-                <td class="py-3 px-4 text-right font-black text-rose-600">20.0%</td>
-                <td class="py-3 px-4 text-right text-amber-500 font-bold">3.80</td>
-                <td class="py-3 px-4 text-slate-500">비닐 냄새, 지퍼 이음새 불량</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold text-[11px]">원자재 교체 협의</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">미니 타포린백 키링 (플라워)</td>
-                <td class="py-3 px-4 text-right">22건</td>
-                <td class="py-3 px-4 text-right text-rose-600 font-bold">4건</td>
-                <td class="py-3 px-4 text-right font-black text-rose-600">18.2%</td>
-                <td class="py-3 px-4 text-right text-amber-500 font-bold">3.95</td>
-                <td class="py-3 px-4 text-slate-500">연결고리 약함, 프린팅 번짐</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold text-[11px]">부자재 보강 완료</span></td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-slate-900">앱코X위글위글 무선 키보드</td>
-                <td class="py-3 px-4 text-right">54건</td>
-                <td class="py-3 px-4 text-right text-rose-600 font-bold">7건</td>
-                <td class="py-3 px-4 text-right font-black text-rose-600">13.0%</td>
-                <td class="py-3 px-4 text-right text-amber-500 font-bold">4.10</td>
-                <td class="py-3 px-4 text-slate-500">블루투스 페어링 끊김</td>
-                <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold text-[11px]">펌웨어 개선 배포</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
 
-    <!-- 5. CS 비용 및 원가 분석 (TAB: COST) -->
+    <!-- 6. CS 비용 및 원가 분석 (TAB: COST) -->
     <div id="content-cost" class="tab-content hidden space-y-6">
-      
-      <!-- 비용 4대 지표 -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
           <p class="text-xs text-slate-500 font-medium">2026 연간 누적 CS 발생비용</p>
@@ -671,7 +622,6 @@
         </div>
       </div>
 
-      <!-- 월별 CS 비용 추이 & 항목별 도넛 -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs lg:col-span-2">
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-1">2026 월별 CS 발생비용 추이 (단위: 천원)</h4>
@@ -694,63 +644,6 @@
           </div>
         </div>
       </div>
-
-      <!-- 표준 원가 기준표 -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h4 class="font-bold text-slate-800 text-base">클레임 유형별 표준 원가(Standard Unit Cost) 산정표</h4>
-          <span class="text-xs bg-slate-100 px-3 py-1 rounded text-slate-600">2026 운영 기준</span>
-        </div>
-        <div class="overflow-x-auto custom-scroll">
-          <table class="w-full text-left text-xs sm:text-sm">
-            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-              <tr>
-                <th class="py-3 px-4">클레임 유형</th>
-                <th class="py-3 px-4 text-right">상담원 공수단가</th>
-                <th class="py-3 px-4 text-right">물류 재입고/검수비</th>
-                <th class="py-3 px-4 text-right">자사 부담 배송비</th>
-                <th class="py-3 px-4 text-right">건당 총 원가</th>
-                <th class="py-3 px-4">원인 및 회계 반영 기준</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-rose-600">불량 - 맞교환</td>
-                <td class="py-3 px-4 text-right">3,500원</td>
-                <td class="py-3 px-4 text-right">2,200원</td>
-                <td class="py-3 px-4 text-right font-medium">6,000원 (왕복)</td>
-                <td class="py-3 px-4 text-right font-black text-slate-900">11,700원</td>
-                <td class="py-3 px-4 text-slate-500">자사 귀책에 의한 맞교환 택배비 전액 부담</td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-rose-600">불량 - 반품환불</td>
-                <td class="py-3 px-4 text-right">3,000원</td>
-                <td class="py-3 px-4 text-right">1,800원</td>
-                <td class="py-3 px-4 text-right font-medium">3,000원 (편도)</td>
-                <td class="py-3 px-4 text-right font-black text-slate-900">7,800원</td>
-                <td class="py-3 px-4 text-slate-500">자사 귀책 반품 회수 택배비 부담</td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-amber-600">변심 - 반품환불</td>
-                <td class="py-3 px-4 text-right">2,500원</td>
-                <td class="py-3 px-4 text-right">1,800원</td>
-                <td class="py-3 px-4 text-right text-emerald-600 font-bold">0원 (고객차감)</td>
-                <td class="py-3 px-4 text-right font-black text-slate-900">4,300원</td>
-                <td class="py-3 px-4 text-slate-500">배송비는 고객 환불금에서 공제 (물류 검수 공수만 발생)</td>
-              </tr>
-              <tr class="hover:bg-slate-50">
-                <td class="py-3 px-4 font-bold text-blue-600">오배송/누락 재출고</td>
-                <td class="py-3 px-4 text-right">2,500원</td>
-                <td class="py-3 px-4 text-right">1,200원</td>
-                <td class="py-3 px-4 text-right font-medium">3,000원</td>
-                <td class="py-3 px-4 text-right font-black text-slate-900">6,700원</td>
-                <td class="py-3 px-4 text-slate-500">물류 피킹/패킹 오류에 따른 긴급 재출고 건</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
 
   </main>
@@ -773,60 +666,99 @@
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/여기에_배포한_ID_입력/exec";
 
-    // 1. 기간별 품질 불량 / 단순변심 CS TOP 5 데이터셋 (D_CS 탭 기반)
-    const CS_TOP_PRODUCTS = {
-      // 10월 4주차 (2026-10-19 ~ 2026-10-25)
-      "10월 4주": {
-        defect: [
-          { rank: 1, name: "기계식 키보드 - 럭키 퍼피", desc: "출고 46건 대비 불량 2건 (불량률 4.3%)", count: "2건" },
-          { rank: 2, name: "미니 택배칼 - 스마일위러브", desc: "출고 206건 대비 불량 2건 (불량률 1.0%)", count: "2건" },
-          { rank: 3, name: "버티컬 마우스 - 럭키 스마일", desc: "출고 33건 대비 불량 2건 (불량률 6.1%)", count: "2건" },
-          { rank: 4, name: "버티컬 마우스 - 럭키 퍼피", desc: "출고 12건 대비 불량 2건 (불량률 16.7%)", count: "2건" },
-          { rank: 5, name: "스톱워치 - 핑크", desc: "출고 71건 대비 불량 2건 (불량률 2.8%)", count: "2건" }
-        ],
-        change: [
-          { rank: 1, name: "메이크업 파우치 - 블랙", desc: "출고 112건 대비 변심 5건 (변심률 4.5%)", count: "5건" },
-          { rank: 2, name: "3way 태블릿 멀티 파우치백 - 블랙 도트", desc: "출고 56건 대비 변심 4건 (변심률 7.1%)", count: "4건" },
-          { rank: 3, name: "라운지 로브 - 스마일 체리 아가일", desc: "출고 199건 대비 변심 4건 (변심률 2.0%)", count: "4건" },
-          { rank: 4, name: "파자마 세트(롱) - 체리", desc: "출고 30건 대비 변심 3건 (변심률 10.0%)", count: "3건" },
-          { rank: 5, name: "[락앤락X위글위글] 스윙 텀블러", desc: "출고 19건 대비 변심 2건 (변심률 10.5%)", count: "2건" }
-        ]
+    // 1. SKU 코드 매핑이 완료된 마스터 제품 데이터베이스 (Ecount/D_CS 연동)
+    const SKU_MASTER_DATABASE = [
+      {
+        sku: "SKU-LOK-001",
+        name: "락앤락X위글위글 원터치 스윙 텀블러",
+        category: "리빙/키친",
+        orders: 1200,
+        defects: 14,
+        changes: 2,
+        keywords: "원터치 버튼 걸림, 패킹 누수"
       },
-      // 10월 5주차 (2026-10-26 ~ 2026-11-01)
-      "10월 5주": {
-        defect: [
-          { rank: 1, name: "[락앤락X위글위글] 스윙 텀블러", desc: "원터치 버튼 걸림 및 실리콘 패킹 누수 접수", count: "4건" },
-          { rank: 2, name: "버티컬 마우스 - 럭키 퍼피", desc: "클릭 센서 인식 불량 및 휠 헛돎 현상", count: "3건" },
-          { rank: 3, name: "기계식 키보드 - 럭키 퍼피", desc: "블루투스 페어링 간헐적 끊김", count: "3건" },
-          { rank: 4, name: "도킹형 보조배터리 - 스마일위러브", desc: "C타입 단자 접촉 인식 불량", count: "2건" },
-          { rank: 5, name: "정서불안 김햄찌 시리얼볼 세트", desc: "배송 중 바닥면 크랙 및 파손 인입", count: "2건" }
-        ],
-        change: [
-          { rank: 1, name: "위글위글 플러피 룸 슬리퍼", desc: "발볼 좁음 및 정사이즈 대비 작다는 사유", count: "6건" },
-          { rank: 2, name: "메이크업 파우치 - 블랙", desc: "수납 크기 예상 차이로 인한 반품", count: "5건" },
-          { rank: 3, name: "라운지 로브 - 스마일 체리 아가일", desc: "기장감 및 착용 핏 변심", count: "4건" },
-          { rank: 4, name: "3way 태블릿 멀티 파우치백", desc: "아이패드 프로 12.9 수납 불가 반품", count: "3건" },
-          { rank: 5, name: "소프트 파자마 로브 - 옐로우", desc: "실물 색상 톤 차이로 인한 교환", count: "3건" }
-        ]
+      {
+        sku: "SKU-LIV-014",
+        name: "위글위글 플러피 룸 슬리퍼",
+        category: "라이프스타일",
+        orders: 850,
+        defects: 1,
+        changes: 24,
+        keywords: "발볼 좁음, 사이즈 작음 반품"
       },
-      // 기본값 / 전체 누적 (D_CS 연간 집계)
-      "default": {
-        defect: [
-          { rank: 1, name: "락앤락X위글위글 원터치 스윙 텀블러", desc: "뚜껑 고무패킹 누수 및 원터치 버튼 걸림 불량", count: "14건" },
-          { rank: 2, name: "고속충전 도킹형 미니 보조배터리 (스마일)", desc: "단자 접촉 불량 및 충전 속도 저하 현상", count: "11건" },
-          { rank: 3, name: "앱코X위글위글 레트로 블루투스 키보드", desc: "블루투스 페어링 끊김 및 특정 키캡 씹힘", count: "9건" },
-          { rank: 4, name: "투명 PVC 스트랩 파우치 키링", desc: "지퍼 레일 이탈 및 아일렛 마감 불량", count: "8건" },
-          { rank: 5, name: "더블월 내열유리 머그컵 350ml", desc: "배송 중 파손 및 바닥 마개 균열 인입", count: "6건" }
-        ],
-        change: [
-          { rank: 1, name: "위글위글 플러피 룸 슬리퍼", desc: "발볼 좁음 및 정사이즈 대비 작다는 사유 (사이즈업 표기 요망)", count: "24건" },
-          { rank: 2, name: "3way 태블릿 멀티 파우치백", desc: "태블릿(아이패드 12.9형) 수납 불가 오인 주문", count: "19건" },
-          { rank: 3, name: "소프트 파자마 로브 (체크/옐로우)", desc: "기장감 과다 및 실물 컬러 톤 차이", count: "14건" },
-          { rank: 4, name: "시그니처 자동 장우산 (데이지)", desc: "생각보다 무게감이 무겁다는 여성 고객 피드백", count: "12건" },
-          { rank: 5, name: "쿠션 슬립 마스크 & 이어플러그", desc: "밴드 압박감 차이로 인한 반품", count: "9건" }
-        ]
+      {
+        sku: "SKU-DIG-003",
+        name: "앱코X위글위글 레트로 블루투스 키보드",
+        category: "디지털",
+        orders: 620,
+        defects: 9,
+        changes: 4,
+        keywords: "블루투스 페어링 끊김, 키캡 씹힘"
+      },
+      {
+        sku: "SKU-BAG-022",
+        name: "3way 태블릿 멀티 파우치백",
+        category: "패션/잡화",
+        orders: 510,
+        defects: 2,
+        changes: 19,
+        keywords: "12.9형 태블릿 수납 불가 오인"
+      },
+      {
+        sku: "SKU-DIG-008",
+        name: "고속충전 도킹형 미니 보조배터리 (스마일)",
+        category: "디지털",
+        orders: 980,
+        defects: 11,
+        changes: 3,
+        keywords: "C타입 단자 접촉 불량, 충전 지연"
+      },
+      {
+        sku: "SKU-APP-009",
+        name: "소프트 파자마 로브 (체크/옐로우)",
+        category: "패션/잡화",
+        orders: 430,
+        defects: 1,
+        changes: 14,
+        keywords: "기장감 과다, 실물 컬러 톤 차이"
+      },
+      {
+        sku: "SKU-BAG-015",
+        name: "투명 PVC 스트랩 파우치 키링",
+        category: "패션/잡화",
+        orders: 720,
+        defects: 8,
+        changes: 2,
+        keywords: "지퍼 레일 이탈, 아일렛 마감"
+      },
+      {
+        sku: "SKU-ACC-031",
+        name: "시그니처 자동 장우산 (데이지)",
+        category: "패션/잡화",
+        orders: 390,
+        defects: 2,
+        changes: 12,
+        keywords: "생각보다 무게감 무거움"
+      },
+      {
+        sku: "SKU-LIV-005",
+        name: "더블월 내열유리 머그컵 350ml",
+        category: "리빙/키친",
+        orders: 680,
+        defects: 6,
+        changes: 1,
+        keywords: "배송 파손, 바닥 마개 균열"
+      },
+      {
+        sku: "SKU-LIV-020",
+        name: "쿠션 슬립 마스크 & 이어플러그",
+        category: "라이프스타일",
+        orders: 310,
+        defects: 0,
+        changes: 9,
+        keywords: "밴드 압박감 차이로 인한 반품"
       }
-    };
+    ];
 
     // 2. 2026년 연간(1월~10월) 시계열 데이터셋
     let WEEKLY_DATA = [
@@ -948,137 +880,6 @@
         inboundTypes: [115, 36, 28, 22, 10, 39]
       },
       {
-        week: '8월 5주',
-        startDate: '2026-08-24',
-        endDate: '2026-08-30',
-        orders: 8505,
-        refunds: 137,
-        inquiries: 595,
-        aiRate: 35.8,
-        csat: 4.81,
-        callRate: 95.9,
-        channels: { cafe24: 54.0, naver: 21.5, kakao: 12.2, cm29: 10.5, others: 1.8 },
-        inboundTypes: [142, 44, 35, 27, 13, 48]
-      },
-      {
-        week: '8월 4주',
-        startDate: '2026-08-17',
-        endDate: '2026-08-23',
-        orders: 7093,
-        refunds: 161,
-        inquiries: 535,
-        aiRate: 35.0,
-        csat: 4.83,
-        callRate: 96.0,
-        channels: { cafe24: 52.8, naver: 22.1, kakao: 11.9, cm29: 11.2, others: 2.0 },
-        inboundTypes: [125, 41, 31, 24, 11, 43]
-      },
-      {
-        week: '8월 3주',
-        startDate: '2026-08-10',
-        endDate: '2026-08-16',
-        orders: 9429,
-        refunds: 107,
-        inquiries: 620,
-        aiRate: 34.2,
-        csat: 4.80,
-        callRate: 95.5,
-        channels: { cafe24: 55.4, naver: 20.8, kakao: 11.6, cm29: 10.4, others: 1.8 },
-        inboundTypes: [150, 48, 38, 30, 15, 52]
-      },
-      {
-        week: '8월 2주',
-        startDate: '2026-08-03',
-        endDate: '2026-08-09',
-        orders: 5687,
-        refunds: 101,
-        inquiries: 440,
-        aiRate: 34.5,
-        csat: 4.86,
-        callRate: 97.0,
-        channels: { cafe24: 51.0, naver: 23.5, kakao: 12.5, cm29: 11.0, others: 2.0 },
-        inboundTypes: [108, 33, 26, 19, 9, 36]
-      },
-      {
-        week: '7월 5주',
-        startDate: '2026-07-27',
-        endDate: '2026-08-02',
-        orders: 7396,
-        refunds: 238,
-        inquiries: 610,
-        aiRate: 33.8,
-        csat: 4.78,
-        callRate: 95.1,
-        channels: { cafe24: 50.0, naver: 22.0, kakao: 13.0, cm29: 12.0, others: 3.0 },
-        inboundTypes: [145, 46, 36, 29, 14, 50]
-      },
-      {
-        week: '7월 4주',
-        startDate: '2026-07-20',
-        endDate: '2026-07-26',
-        orders: 24866,
-        refunds: 260,
-        inquiries: 1420,
-        aiRate: 33.1,
-        csat: 4.70,
-        callRate: 93.8,
-        channels: { cafe24: 68.2, naver: 15.4, kakao: 8.8, cm29: 6.5, others: 1.1 },
-        inboundTypes: [350, 110, 85, 68, 32, 115]
-      },
-      {
-        week: '7월 3주',
-        startDate: '2026-07-13',
-        endDate: '2026-07-19',
-        orders: 6297,
-        refunds: 140,
-        inquiries: 510,
-        aiRate: 32.5,
-        csat: 4.84,
-        callRate: 96.5,
-        channels: { cafe24: 53.0, naver: 22.0, kakao: 12.0, cm29: 11.0, others: 2.0 },
-        inboundTypes: [122, 38, 30, 23, 11, 41]
-      },
-      {
-        week: '7월 2주',
-        startDate: '2026-07-06',
-        endDate: '2026-07-12',
-        orders: 10443,
-        refunds: 134,
-        inquiries: 740,
-        aiRate: 32.0,
-        csat: 4.79,
-        callRate: 95.2,
-        channels: { cafe24: 57.0, naver: 20.0, kakao: 11.5, cm29: 9.8, others: 1.7 },
-        inboundTypes: [175, 55, 44, 35, 17, 58]
-      },
-      {
-        week: '7월 1주',
-        startDate: '2026-06-29',
-        endDate: '2026-07-05',
-        orders: 19700,
-        refunds: 150,
-        inquiries: 1180,
-        aiRate: 31.5,
-        csat: 4.72,
-        callRate: 94.0,
-        channels: { cafe24: 64.0, naver: 17.0, kakao: 10.0, cm29: 7.5, others: 1.5 },
-        inboundTypes: [280, 90, 72, 56, 26, 96]
-      },
-      // 1월 상반기 기준 데이터
-      {
-        week: '1월 3주',
-        startDate: '2026-01-12',
-        endDate: '2026-01-18',
-        orders: 15958,
-        refunds: 198,
-        inquiries: 962,
-        aiRate: 29.9,
-        csat: 4.88,
-        callRate: 96.5,
-        channels: { cafe24: 50.8, naver: 24.2, kakao: 14.0, cm29: 10.0, others: 1.0 },
-        inboundTypes: [220, 70, 55, 40, 20, 80]
-      },
-      {
         week: '1월 1주',
         startDate: '2026-01-01',
         endDate: '2026-01-04',
@@ -1093,11 +894,10 @@
       }
     ];
 
-    // 현재 선택된 시작/종료 일자
     let currentStartDate = '2026-10-19';
     let currentEndDate = '2026-10-25';
 
-    // Chart.js 인스턴스 전역 관리
+    // Chart 인스턴스 전역 관리
     let chartOverviewTrend = null;
     let chartOverviewChannel = null;
     let chartCsCategories = null;
@@ -1108,14 +908,12 @@
     let chartCostMonthly = null;
     let chartCostDoughnut = null;
 
-    // 초기 로딩
     window.onload = function() {
       document.getElementById('startDatePicker').value = currentStartDate;
       document.getElementById('endDatePicker').value = currentEndDate;
       renderAll();
     };
 
-    // 캘린더에서 날짜 직접 변경 시 호출
     function onCustomDateChange() {
       const sVal = document.getElementById('startDatePicker').value;
       const eVal = document.getElementById('endDatePicker').value;
@@ -1136,7 +934,6 @@
       renderAll();
     }
 
-    // 퀵 레인지 버튼 클릭 시 일자 자동 세팅
     function setQuickDateRange(rangeType) {
       const now = new Date('2026-11-02'); 
       const formatDate = (d) => d.toISOString().split('T')[0];
@@ -1146,27 +943,22 @@
         currentEndDate = formatDate(now);
       } 
       else if (rangeType === 'lastWeek') {
-        // 전주: 2026-10-26 ~ 2026-11-01
         currentStartDate = '2026-10-26';
         currentEndDate = '2026-11-01';
       } 
       else if (rangeType === 'twoWeeksAgo') {
-        // 전전주: 2026-10-19 ~ 2026-10-25
         currentStartDate = '2026-10-19';
         currentEndDate = '2026-10-25';
       } 
-        else if (rangeType === 'lastMonth') {
-        // 지난달: 2026-10-01 ~ 2026-10-31
+      else if (rangeType === 'lastMonth') {
         currentStartDate = '2026-10-01';
         currentEndDate = '2026-10-31';
-       }
+      } 
       else if (rangeType === 'thisMonth') {
-        // 이번달: 2026-11-01 ~ 2026-11-30
         currentStartDate = '2026-11-01';
         currentEndDate = '2026-11-30';
       } 
       else if (rangeType === 'all') {
-        // ★ 전체 선택 시 2026년 1월 1일부터 최신일까지 지정 ★
         currentStartDate = '2026-01-01';
         currentEndDate = '2026-11-01';
       }
@@ -1176,19 +968,12 @@
       renderAll();
     }
 
-    // 데이터 렌더링 총괄 함수 (자유 기간 집계 및 TOP 5 동기화)
     function renderAll() {
       const d1 = new Date(currentStartDate);
       const d2 = new Date(currentEndDate);
       const diffTime = Math.abs(d2 - d1);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      const dateRangeEl = document.getElementById('dateRangeText');
-      const dateSpanEl = document.getElementById('dateSpanBadge');
-      if (dateRangeEl) dateRangeEl.textContent = `${currentStartDate.replace(/-/g, '.')} ~ ${currentEndDate.replace(/-/g, '.')}`;
-      if (dateSpanEl) dateSpanEl.textContent = `${diffDays}일간`;
-
-      // 선택된 기간과 겹치는(Overlap) 주차 데이터 필터링
       const overlappingWeeks = WEEKLY_DATA.filter(item => {
         return !(item.endDate < currentStartDate || item.startDate > currentEndDate);
       });
@@ -1247,71 +1032,198 @@
         prevData = WEEKLY_DATA[2];
       }
 
-      // UI 및 차트 업데이트
       updateKPIs(displayData, prevData);
       updateOverviewTable(overlappingWeeks);
       updateOverviewCharts(overlappingWeeks);
       updateCsCharts(displayData);
-      updateCsTopLists(overlappingWeeks);
+      renderCsTabContent(diffDays); // ★ 신설 CS 탭 렌더링 호출
       updateAiCharts();
       updateReviewChart();
       updateCostCharts();
     }
 
-    // 선택 기간에 맞춰 불량 / 변심 TOP 5 동적 렌더링 함수
-    function updateCsTopLists(selectedWeeks) {
-      const defectContainer = document.getElementById('defectTopList');
-      const changeContainer = document.getElementById('changeTopList');
-      if (!defectContainer || !changeContainer) return;
+    // 신설 CS 탭 동적 렌더링 (TOP 5 + SKU 테이블 + 출고 대비 비율 계산)
+    function renderCsTabContent(diffDays) {
+      const ratio = Math.max(0.14, Math.min(1.0, diffDays / 30));
 
-      // 주차 타겟 키 판별
-      let targetKey = "default";
-      if (selectedWeeks.length === 1) {
-        targetKey = selectedWeeks[0].week;
-      } else if (selectedWeeks.some(w => w.week === '10월 5주') && selectedWeeks.some(w => w.week === '10월 4주')) {
-        targetKey = "default";
-      } else if (selectedWeeks.some(w => w.week === '10월 5주')) {
-        targetKey = "10월 5주";
-      } else if (selectedWeeks.some(w => w.week === '10월 4주')) {
-        targetKey = "10월 4주";
-      }
+      let totalOrders = 0;
+      let totalDefects = 0;
+      let totalChanges = 0;
 
-      const activeData = CS_TOP_PRODUCTS[targetKey] || CS_TOP_PRODUCTS["default"];
+      const dynamicList = SKU_MASTER_DATABASE.map(item => {
+        const dOrders = Math.round(item.orders * ratio);
+        const dDefects = Math.max(0, Math.round(item.defects * ratio));
+        const dChanges = Math.max(0, Math.round(item.changes * ratio));
 
-      // 1. 품질 불량 TOP 5 렌더링
-      defectContainer.innerHTML = activeData.defect.map(item => `
-        <div class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition">
+        totalOrders += dOrders;
+        totalDefects += dDefects;
+        totalChanges += dChanges;
+
+        return {
+          ...item,
+          currentOrders: dOrders,
+          currentDefects: dDefects,
+          defectRate: dOrders > 0 ? ((dDefects / dOrders) * 100).toFixed(2) : "0.00",
+          currentChanges: dChanges,
+          changeRate: dOrders > 0 ? ((dChanges / dOrders) * 100).toFixed(2) : "0.00"
+        };
+      });
+
+      // 상단 KPI 반영
+      const overallDefectRate = totalOrders > 0 ? ((totalDefects / totalOrders) * 100).toFixed(2) : "0.00";
+      const overallChangeRate = totalOrders > 0 ? ((totalChanges / totalOrders) * 100).toFixed(2) : "0.00";
+
+      document.getElementById('csTabDefectRate').textContent = overallDefectRate;
+      document.getElementById('csTabDefectCount').textContent = `총 출고 대비 ${totalDefects}건 품질 하자 접수`;
+      document.getElementById('csTabChangeRate').textContent = overallChangeRate;
+      document.getElementById('csTabChangeCount').textContent = `총 출고 대비 ${totalChanges}건 단순 변심 반품`;
+
+      // 1. 품질 불량 TOP 5
+      const topDefects = [...dynamicList].sort((a, b) => b.currentDefects - a.currentDefects).slice(0, 5);
+      document.getElementById('csTabDefectList').innerHTML = topDefects.map((item, idx) => `
+        <div class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer" onclick="selectSkuItem('${item.sku}')">
           <div class="flex items-center space-x-3">
-            <span class="w-6 h-6 rounded-md ${item.rank <= 2 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold text-xs">
-              ${item.rank}
+            <span class="w-6 h-6 rounded-md ${idx < 2 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold text-xs">
+              ${idx + 1}
             </span>
             <div>
-              <p class="font-bold text-slate-900">${item.name}</p>
-              <p class="text-[11px] text-slate-400">${item.desc}</p>
+              <div class="flex items-center gap-1.5">
+                <span class="font-mono text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">${item.sku}</span>
+                <p class="font-bold text-slate-900">${item.name}</p>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">${item.keywords} (불량률 ${item.defectRate}%)</p>
             </div>
           </div>
-          <span class="font-bold text-rose-600">${item.count}</span>
+          <span class="font-black text-rose-600 text-sm">${item.currentDefects}건</span>
         </div>
       `).join('');
 
-      // 2. 단순 변심 TOP 5 렌더링
-      changeContainer.innerHTML = activeData.change.map(item => `
-        <div class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition">
+      // 2. 단순 변심 TOP 5
+      const topChanges = [...dynamicList].sort((a, b) => b.currentChanges - a.currentChanges).slice(0, 5);
+      document.getElementById('csTabChangeList').innerHTML = topChanges.map((item, idx) => `
+        <div class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer" onclick="selectSkuItem('${item.sku}')">
           <div class="flex items-center space-x-3">
-            <span class="w-6 h-6 rounded-md ${item.rank <= 2 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold text-xs">
-              ${item.rank}
+            <span class="w-6 h-6 rounded-md ${idx < 2 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold text-xs">
+              ${idx + 1}
             </span>
             <div>
-              <p class="font-bold text-slate-900">${item.name}</p>
-              <p class="text-[11px] text-slate-400">${item.desc}</p>
+              <div class="flex items-center gap-1.5">
+                <span class="font-mono text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">${item.sku}</span>
+                <p class="font-bold text-slate-900">${item.name}</p>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">${item.keywords} (변심률 ${item.changeRate}%)</p>
             </div>
           </div>
-          <span class="font-bold text-amber-600">${item.count}</span>
+          <span class="font-black text-amber-600 text-sm">${item.currentChanges}건</span>
         </div>
       `).join('');
+
+      // 3. 하단 SKU 상세 분석 테이블 렌더링
+      renderSkuTableRows(dynamicList);
     }
 
-    // KPI 카드 수치 업데이트
+    // SKU 상세 분석 테이블 행 생성
+    function renderSkuTableRows(items) {
+      const tbody = document.getElementById('skuTableBody');
+      tbody.innerHTML = '';
+      document.getElementById('skuTableResultCount').textContent = `검색 결과: ${items.length}개 품목 표시 중`;
+
+      if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400 text-xs">일치하는 제품 또는 SKU 코드가 없습니다.</td></tr>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-mono font-bold text-slate-800 text-xs">${item.sku}</td>
+          <td class="py-3 px-4 font-bold text-slate-900">${item.name}</td>
+          <td class="py-3 px-4 text-slate-500">${item.category}</td>
+          <td class="py-3 px-4 text-right font-medium text-slate-700">${item.currentOrders ? item.currentOrders.toLocaleString() : item.orders.toLocaleString()}건</td>
+          <td class="py-3 px-4 text-right font-bold text-rose-600">${item.currentDefects !== undefined ? item.currentDefects : item.defects}건</td>
+          <td class="py-3 px-4 text-right font-semibold text-rose-600">${item.defectRate || "0.00"}%</td>
+          <td class="py-3 px-4 text-right font-bold text-amber-600">${item.currentChanges !== undefined ? item.currentChanges : item.changes}건</td>
+          <td class="py-3 px-4 text-right font-semibold text-amber-600">${item.changeRate || "0.00"}%</td>
+          <td class="py-3 px-4 text-slate-400 text-xs">${item.keywords}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 앞글자 자동완성(Autocomplete) 드롭다운 로직
+    function onProductSearchInput(val) {
+      const clearBtn = document.getElementById('skuSearchClearBtn');
+      const dropdown = document.getElementById('skuAutocompleteDropdown');
+      const query = val.trim().toLowerCase();
+
+      if (!query) {
+        clearBtn.classList.add('hidden');
+        dropdown.classList.add('hidden');
+        dropdown.innerHTML = '';
+        filterSkuTable();
+        return;
+      }
+
+      clearBtn.classList.remove('hidden');
+
+      // 앞글자 또는 SKU 매칭 리스트 추출
+      const matched = SKU_MASTER_DATABASE.filter(item => 
+        item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query)
+      );
+
+      if (matched.length > 0) {
+        dropdown.classList.remove('hidden');
+        dropdown.innerHTML = matched.map(m => `
+          <div onclick="selectSkuItem('${m.sku}')" class="px-3.5 py-2 hover:bg-rose-50/70 transition flex items-center justify-between cursor-pointer">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">${m.sku}</span>
+              <span class="font-semibold text-slate-800">${m.name}</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-medium">${m.category}</span>
+          </div>
+        `).join('');
+      } else {
+        dropdown.classList.remove('hidden');
+        dropdown.innerHTML = `<div class="p-3 text-slate-400 text-center text-[11px]">일치하는 SKU 또는 제품명이 없습니다.</div>`;
+      }
+
+      filterSkuTable();
+    }
+
+    // 자동완성 아이템 클릭 시 필터 확정
+    function selectSkuItem(skuCode) {
+      const item = SKU_MASTER_DATABASE.find(s => s.sku === skuCode);
+      if (item) {
+        document.getElementById('skuSearchInput').value = item.name;
+        document.getElementById('skuAutocompleteDropdown').classList.add('hidden');
+        document.getElementById('skuSearchClearBtn').classList.remove('hidden');
+        filterSkuTable();
+      }
+    }
+
+    function clearSkuSearch() {
+      document.getElementById('skuSearchInput').value = '';
+      document.getElementById('skuSearchClearBtn').classList.add('hidden');
+      document.getElementById('skuAutocompleteDropdown').classList.add('hidden');
+      document.getElementById('csCategoryFilter').value = 'ALL';
+      filterSkuTable();
+    }
+
+    function filterSkuTable() {
+      const query = document.getElementById('skuSearchInput').value.trim().toLowerCase();
+      const cat = document.getElementById('csCategoryFilter').value;
+
+      let filtered = SKU_MASTER_DATABASE.filter(item => {
+        const matchesQuery = !query || item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query);
+        const matchesCat = (cat === 'ALL') || (item.category === cat);
+        return matchesQuery && matchesCat;
+      });
+
+      renderSkuTableRows(filtered);
+    }
+
+    // 기본 KPI 업데이트
     function updateKPIs(curr, prev) {
       document.getElementById('kpi-orders').textContent = curr.orders.toLocaleString();
       const prevOrders = prev.orders || curr.orders;
@@ -1367,7 +1279,7 @@
       document.getElementById('kpi-csat').textContent = typeof curr.csat === 'number' ? curr.csat.toFixed(2) : curr.csat;
       document.getElementById('kpi-call-rate').textContent = curr.callRate + '%';
 
-      // CS 탭 서브 카드 수치
+      // CS & Inquiry 탭 서브 카드 수치
       const chatInbound = Math.round(curr.inquiries * 0.87);
       const callInbound = curr.inquiries - chatInbound;
       const answeredCalls = Math.round(callInbound * (curr.callRate / 100));
@@ -1388,7 +1300,7 @@
       const tbody = document.getElementById('overviewTableBody');
       tbody.innerHTML = '';
 
-      const slice = WEEKLY_DATA.slice(0, 10);
+      const slice = WEEKLY_DATA.slice(0, 8);
 
       slice.forEach(item => {
         const isSelected = selectedWeeks.some(w => w.week === item.week);
@@ -1485,7 +1397,6 @@
         });
       }
 
-      // 채널 점유율 도넛 차트
       const chRef = (selectedWeeks.length > 0 ? selectedWeeks[0] : WEEKLY_DATA[1]).channels;
       const channelLabels = ['카페24(자사몰)', '스마트스토어', '카카오', '29CM', '기타'];
       const channelValues = [chRef.cafe24, chRef.naver, chRef.kakao, chRef.cm29, chRef.others];
@@ -1532,7 +1443,6 @@
       `;
     }
 
-    // CS 탭 차트
     function updateCsCharts(curr) {
       const ctxCategories = document.getElementById('chart-cs-categories');
       if (chartCsCategories) {
@@ -1582,7 +1492,6 @@
       }
     }
 
-    // AI 탭 차트
     function updateAiCharts() {
       const ctxTrend = document.getElementById('chart-ai-trend');
       if (!chartAiTrend) {
@@ -1642,7 +1551,6 @@
       }
     }
 
-    // 리뷰 탭 월별 추이 차트
     function updateReviewChart() {
       const ctxReview = document.getElementById('chart-review-monthly');
       if (!chartReviewMonthly) {
@@ -1698,7 +1606,6 @@
       }
     }
 
-    // 비용 탭 차트
     function updateCostCharts() {
       const ctxCostM = document.getElementById('chart-cost-monthly');
       if (!chartCostMonthly) {
@@ -1750,7 +1657,6 @@
       }
     }
 
-    // 구글 시트 수동 동기화 실행 함수
     async function syncSheetData() {
       const btn = document.getElementById('syncBtn');
       const icon = document.getElementById('syncIcon');
@@ -1792,7 +1698,7 @@
       }
     }
 
-    // 탭 전환 핸들러
+    // 탭 전환 핸들러 (신설 CS 탭 포함 6개 탭 제어)
     function switchTab(tabKey) {
       document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
       const activeEl = document.getElementById('content-' + tabKey);
@@ -1809,16 +1715,6 @@
       }
 
       window.dispatchEvent(new Event('resize'));
-    }
-
-    // 리뷰 상품 검색 필터
-    function filterReviewItems() {
-      const query = document.getElementById('reviewFilterInput').value.toLowerCase();
-      const rows = document.getElementById('reviewTableBody').getElementsByTagName('tr');
-      for (let i = 0; i < rows.length; i++) {
-        const text = rows[i].textContent.toLowerCase();
-        rows[i].style.display = text.includes(query) ? '' : 'none';
-      }
     }
   </script>
 </body>
