@@ -132,9 +132,9 @@
           </div>
         </div>
 
-        <!-- 우측: 퀵 필터 버튼군 -->
+        <!-- 우측: 퀵 필터 버튼군 (클릭 시 하이라이트) -->
         <div class="flex items-center gap-1 overflow-x-auto custom-scroll" id="quickBtnGroup">
-          <span class="text-[11px] text-slate-400 font-semibold mr-1">빠른선택e:</span>
+          <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Range:</span>
           <button onclick="setQuickDateRange('today')" id="quickBtn-today" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">오늘</button>
           <button onclick="setQuickDateRange('lastWeek')" id="quickBtn-lastWeek" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">전주</button>
           <button onclick="setQuickDateRange('twoWeeksAgo')" id="quickBtn-twoWeeksAgo" class="quick-btn px-2.5 py-1 bg-slate-900 text-white font-bold rounded-md transition shadow-2xs">전전주</button>
@@ -687,6 +687,7 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_예시_배포_URL/exec";
 
     let SKU_MASTER_DATABASE = [];
+    let CURRENT_PERIOD_LIST = []; // 실시간 날짜 필터링 연산 데이터셋 보관
     let currentSkuSort = 'orders';
     let currentSkuVisibleCount = 10;
     let currentFilteredSkuList = [];
@@ -904,6 +905,7 @@
       updateCostCharts();
     }
 
+    // [핵심 정정] 실시간 집계 데이터가 테이블로 100% 온전히 전달되는 렌더링 함수
     function renderCsTabContent(diffDays) {
       const logs = window.WIGGLE_CS_LOGS || [];
       const skuClaimMap = {};
@@ -913,11 +915,13 @@
       const allTimeDefectMap = {};
 
       logs.forEach(l => {
+        // 1. 전체 기간 누적 집계 (TOP 5 용도)
         if (l.df > 0) {
           if (!allTimeDefectMap[l.s]) allTimeDefectMap[l.s] = { defects: 0, reason: l.r || "" };
           allTimeDefectMap[l.s].defects += l.df;
         }
 
+        // 2. 선택된 조회 기간 필터링 집계
         if (l.d >= currentStartDate && l.d <= currentEndDate) {
           if (!skuClaimMap[l.s]) {
             skuClaimMap[l.s] = { defects: 0, changes: 0, reasons: [] };
@@ -937,9 +941,11 @@
       });
 
       let estimatedPeriodOrders = Math.max(100, Math.round(diffDays * 1150));
-      const dynamicList = SKU_MASTER_DATABASE.map(item => {
+
+      // 3. 실측 수치를 바인딩하여 전역 CURRENT_PERIOD_LIST에 보관 (테이블에서 직접 사용)
+      CURRENT_PERIOD_LIST = SKU_MASTER_DATABASE.map(item => {
         const claim = skuClaimMap[item.sku] || { defects: 0, changes: 0, reasons: [] };
-        const itemOrders = Math.round((item.orders || 300) * Math.min(1.0, Math.max(0.05, diffDays / 30)));
+        const itemOrders = Math.round((item.orders || 500) * Math.min(1.0, Math.max(0.05, diffDays / 30)));
         const itemDefects = claim.defects;
         const itemChanges = claim.changes;
 
@@ -954,6 +960,7 @@
         };
       });
 
+      // 4. 상단 3대 KPI 카드 반영
       const overallDefectRate = estimatedPeriodOrders > 0 ? ((totalPeriodDefects / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
       const overallChangeRate = estimatedPeriodOrders > 0 ? ((totalPeriodChanges / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
 
@@ -963,8 +970,9 @@
       document.getElementById('csTabChangeCount').textContent = `조회기간(${diffDays}일간) 출고 대비 단순 변심 반품 ${totalPeriodChanges}건 접수`;
       
       const skuCountEl = document.getElementById('csTabTotalSkuCount');
-      if (skuCountEl) skuCountEl.textContent = dynamicList.length.toLocaleString();
+      if (skuCountEl) skuCountEl.textContent = CURRENT_PERIOD_LIST.length.toLocaleString();
 
+      // 5. 하단 CS TOP 5 섹션: 2026 전체 누적 기준
       const fullCumulativeList = SKU_MASTER_DATABASE.map(item => {
         const cDefects = (allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].defects : 0);
         const cOrders = item.orders || 500;
@@ -1024,6 +1032,7 @@
         </div>
       `).join('');
 
+      // 6. 실시간 집계된 CURRENT_PERIOD_LIST 기준으로 테이블 렌더링
       filterSkuTable();
     }
 
@@ -1041,23 +1050,14 @@
       filterSkuTable();
     }
 
+    // [정정 완료] 검색/필터링 시 항상 실측 집계치인 CURRENT_PERIOD_LIST 참조
     function filterSkuTable() {
       const query = document.getElementById('skuSearchInput').value.trim().toLowerCase();
       const cat = document.getElementById('csCategoryFilter').value;
 
-      let filtered = SKU_MASTER_DATABASE.map(item => {
-        const dOrders = item.orders || 0;
-        const dDefects = item.defects || 0;
-        const dChanges = item.changes || 0;
-        return {
-          ...item,
-          orders: dOrders,
-          defects: dDefects,
-          changes: dChanges,
-          defectRate: dOrders > 0 ? ((dDefects / dOrders) * 100).toFixed(2) : "0.00",
-          changeRate: dOrders > 0 ? ((dChanges / dOrders) * 100).toFixed(2) : "0.00"
-        };
-      }).filter(item => {
+      const sourceList = (CURRENT_PERIOD_LIST.length > 0) ? CURRENT_PERIOD_LIST : SKU_MASTER_DATABASE;
+
+      let filtered = sourceList.filter(item => {
         const matchesQuery = !query || item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query);
         const matchesCat = (cat === 'ALL') || (item.category === cat);
         return matchesQuery && matchesCat;
@@ -1153,7 +1153,8 @@
 
       clearBtn.classList.remove('hidden');
 
-      const matched = SKU_MASTER_DATABASE.filter(item => 
+      const sourceList = (CURRENT_PERIOD_LIST.length > 0) ? CURRENT_PERIOD_LIST : SKU_MASTER_DATABASE;
+      const matched = sourceList.filter(item => 
         item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query)
       ).slice(0, 15);
 
@@ -1178,7 +1179,8 @@
     }
 
     function selectSkuItem(skuCode) {
-      const item = SKU_MASTER_DATABASE.find(s => s.sku === skuCode);
+      const sourceList = (CURRENT_PERIOD_LIST.length > 0) ? CURRENT_PERIOD_LIST : SKU_MASTER_DATABASE;
+      const item = sourceList.find(s => s.sku === skuCode);
       if (item) {
         document.getElementById('skuSearchInput').value = item.name;
         document.getElementById('skuAutocompleteDropdown').classList.add('hidden');
@@ -1386,6 +1388,24 @@
           },
           options: { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { display: false } } }
         });
+      }
+
+      const miniEl = document.getElementById('channelStatsMini');
+      if (miniEl) {
+        miniEl.innerHTML = `
+          <div>
+            <p class="text-[11px] text-slate-400">카페24</p>
+            <p class="text-xs font-bold text-slate-800">${chRef.cafe24}%</p>
+          </div>
+          <div>
+            <p class="text-[11px] text-slate-400">스토어팜</p>
+            <p class="text-xs font-bold text-slate-800">${chRef.naver}%</p>
+          </div>
+          <div>
+            <p class="text-[11px] text-slate-400">카카오</p>
+            <p class="text-xs font-bold text-slate-800">${chRef.kakao}%</p>
+          </div>
+        `;
       }
     }
 
