@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CS Master</title>
+  <title>Wiggle Wiggle CS Master Operations Dashboard</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js -->
@@ -727,7 +727,8 @@
           sku: p.sku,
           name: p.name,
           category: p.cat || "기타",
-          orders: 500,
+          base_orders: p.base_orders || 150,
+          orders: p.base_orders || 150,
           defects: 0,
           changes: 0,
           keywords: "-"
@@ -906,7 +907,41 @@
       updateCostCharts();
     }
 
-    // [핵심 정정] 실시간 집계 데이터가 테이블로 100% 온전히 전달되는 렌더링 함수
+        // [정정 완료] 실측 주문/출고 데이터(198,510건) 기반 기간별 출고량 연동 함수
+    function getSkuPeriodOrders(sku, sDate, eDate, diffDays, baseOrders) {
+      if (window.WIGGLE_ORDER_DATA) {
+        // 1. 최근(10~11월) 일별 정밀 데이터가 존재하는 경우
+        if (sDate >= '2026-10-01' && window.WIGGLE_ORDER_DATA.recent_daily && window.WIGGLE_ORDER_DATA.recent_daily[sku]) {
+          const dMap = window.WIGGLE_ORDER_DATA.recent_daily[sku];
+          let dailySum = 0;
+          for (let d in dMap) {
+            if (d >= sDate && d <= eDate) dailySum += dMap[d];
+          }
+          if (dailySum > 0) return dailySum;
+        }
+
+        // 2. 월별 집계 데이터가 존재하는 경우
+        if (window.WIGGLE_ORDER_DATA.monthly && window.WIGGLE_ORDER_DATA.monthly[sku]) {
+          const mMap = window.WIGGLE_ORDER_DATA.monthly[sku];
+          const sMonth = sDate.substring(0, 7);
+          const eMonth = eDate.substring(0, 7);
+          let monthSum = 0;
+          for (let m in mMap) {
+            if (m >= sMonth && m <= eMonth) monthSum += mMap[m];
+          }
+          if (monthSum > 0) {
+            if (sMonth === eMonth && diffDays < 25) {
+              return Math.max(1, Math.round(monthSum * (diffDays / 30)));
+            }
+            return monthSum;
+          }
+        }
+      }
+      // 3. 출고 이력이 없는 품목 또는 비성수기 품목의 현실적 모수 환산 (단일 500건 고정 해제)
+      return Math.max(1, Math.round((baseOrders || 120) * (diffDays / 305)));
+    }
+
+    // [정정 완료] 실시간 집계 데이터가 테이블로 100% 온전히 전달되는 렌더링 함수
     function renderCsTabContent(diffDays) {
       const logs = window.WIGGLE_CS_LOGS || [];
       const skuClaimMap = {};
@@ -941,12 +976,13 @@
         }
       });
 
-      let estimatedPeriodOrders = Math.max(100, Math.round(diffDays * 1150));
-
-      // 3. 실측 수치를 바인딩하여 전역 CURRENT_PERIOD_LIST에 보관 (테이블에서 직접 사용)
+      // 3. 품목별 고유 실측 출고 수량과 불량률을 전역 CURRENT_PERIOD_LIST에 바인딩
+      let totalCalculatedOrders = 0;
       CURRENT_PERIOD_LIST = SKU_MASTER_DATABASE.map(item => {
         const claim = skuClaimMap[item.sku] || { defects: 0, changes: 0, reasons: [] };
-        const itemOrders = Math.round((item.orders || 500) * Math.min(1.0, Math.max(0.05, diffDays / 30)));
+        const itemOrders = getSkuPeriodOrders(item.sku, currentStartDate, currentEndDate, diffDays, item.base_orders);
+        totalCalculatedOrders += itemOrders;
+
         const itemDefects = claim.defects;
         const itemChanges = claim.changes;
 
@@ -962,25 +998,31 @@
       });
 
       // 4. 상단 3대 KPI 카드 반영
-      const overallDefectRate = estimatedPeriodOrders > 0 ? ((totalPeriodDefects / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
-      const overallChangeRate = estimatedPeriodOrders > 0 ? ((totalPeriodChanges / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
+      const overallDefectRate = totalCalculatedOrders > 0 ? ((totalPeriodDefects / totalCalculatedOrders) * 100).toFixed(2) : "0.00";
+      const overallChangeRate = totalCalculatedOrders > 0 ? ((totalPeriodChanges / totalCalculatedOrders) * 100).toFixed(2) : "0.00";
 
       document.getElementById('csTabDefectRate').textContent = overallDefectRate;
-      document.getElementById('csTabDefectCount').textContent = `조회기간(${diffDays}일간) 출고 ${estimatedPeriodOrders.toLocaleString()}건 중 불량 ${totalPeriodDefects}건 접수`;
+      document.getElementById('csTabDefectCount').textContent = `조회기간(${diffDays}일간) 출고 ${totalCalculatedOrders.toLocaleString()}건 중 불량 ${totalPeriodDefects}건 접수`;
       document.getElementById('csTabChangeRate').textContent = overallChangeRate;
       document.getElementById('csTabChangeCount').textContent = `조회기간(${diffDays}일간) 출고 대비 단순 변심 반품 ${totalPeriodChanges}건 접수`;
       
       const skuCountEl = document.getElementById('csTabTotalSkuCount');
       if (skuCountEl) skuCountEl.textContent = CURRENT_PERIOD_LIST.length.toLocaleString();
 
-      // 5. 하단 CS TOP 5 섹션: 2026 전체 누적 기준
+      // 5. 하단 CS TOP 5 섹션: 2026 전체 누적 기준 (실제 연간 주문수량 기반)
       const fullCumulativeList = SKU_MASTER_DATABASE.map(item => {
         const cDefects = (allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].defects : 0);
-        const cOrders = item.orders || 500;
+        let annualOrders = (item.base_orders || 150);
+        if (window.WIGGLE_ORDER_DATA && window.WIGGLE_ORDER_DATA.monthly && window.WIGGLE_ORDER_DATA.monthly[item.sku]) {
+          const mMap = window.WIGGLE_ORDER_DATA.monthly[item.sku];
+          annualOrders = Object.values(mMap).reduce((a, b) => a + b, 0);
+        }
+
         return {
           ...item,
           defects: cDefects,
-          defectRate: cOrders > 0 ? ((cDefects / cOrders) * 100).toFixed(2) : "0.00",
+          orders: annualOrders,
+          defectRate: annualOrders > 0 ? ((cDefects / annualOrders) * 100).toFixed(2) : "0.00",
           keywords: allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].reason : "-"
         };
       });
@@ -1008,7 +1050,7 @@
       `).join('');
 
       const topDefectsRate = [...fullCumulativeList]
-        .filter(i => i.orders >= 30)
+        .filter(i => (i.orders || 0) >= 50)
         .sort((a, b) => parseFloat(b.defectRate) - parseFloat(a.defectRate))
         .slice(0, 5);
 
@@ -1051,7 +1093,7 @@
       filterSkuTable();
     }
 
-    // [정정 완료] 검색/필터링 시 항상 실측 집계치인 CURRENT_PERIOD_LIST 참조
+    // [정정 완료] 검색어 및 카테고리에 맞춰 상단 3대 KPI 카드와 테이블이 1:1 동기화되는 함수
     function filterSkuTable() {
       const query = document.getElementById('skuSearchInput').value.trim().toLowerCase();
       const cat = document.getElementById('csCategoryFilter').value;
@@ -1064,6 +1106,30 @@
         return matchesQuery && matchesCat;
       });
 
+      // 검색어 입력 시 상단 3대 KPI 카드를 검색 대상 품목 통계로 동적 업데이트
+      let sumOrders = 0, sumDefects = 0, sumChanges = 0;
+      filtered.forEach(item => {
+        sumOrders += item.orders || 0;
+        sumDefects += item.defects || 0;
+        sumChanges += item.changes || 0;
+      });
+
+      const dRate = sumOrders > 0 ? ((sumDefects / sumOrders) * 100).toFixed(2) : "0.00";
+      const cRate = sumOrders > 0 ? ((sumChanges / sumOrders) * 100).toFixed(2) : "0.00";
+
+      document.getElementById('csTabDefectRate').textContent = dRate;
+      document.getElementById('csTabDefectCount').textContent = query
+        ? `검색 품목(${filtered.length}개) 출고 ${sumOrders.toLocaleString()}건 중 불량 ${sumDefects}건 접수`
+        : `조회기간 출고 ${sumOrders.toLocaleString()}건 중 불량 ${sumDefects}건 접수`;
+
+      document.getElementById('csTabChangeRate').textContent = cRate;
+      document.getElementById('csTabChangeCount').textContent = query
+        ? `검색 품목(${filtered.length}개) 출고 대비 단순 변심 반품 ${sumChanges}건 접수`
+        : `조회기간 출고 대비 단순 변심 반품 ${sumChanges}건 접수`;
+
+      document.getElementById('csTabTotalSkuCount').textContent = filtered.length.toLocaleString();
+
+      // 테이블 정렬
       if (currentSkuSort === 'orders') {
         filtered.sort((a, b) => b.orders - a.orders);
       } else if (currentSkuSort === 'defectRate') {
