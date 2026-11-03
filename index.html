@@ -358,7 +358,7 @@
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </div>
-            <input type="text" id="skuSearchInput" oninput="onProductSearchInput(this.value)" placeholder="CSV 전체 2,426개 제품명 또는 SKU 코드 입력... (예: 락앤, 양치컵, 보조배터리, 키보드, PWIKR)" 
+            <input type="text" id="skuSearchInput" oninput="onProductSearchInput(this.value)" onkeydown="onProductSearchKeyDown(event)" placeholder="CSV 전체 2,426개 제품명 또는 SKU 코드 입력... (예: 락앤, 양치컵, 보조배터리, 키보드, PWIKR)" 
                    autocomplete="off"
                    class="w-full pl-9 pr-9 py-2 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium text-slate-800 transition">
             <button onclick="clearSkuSearch()" id="skuSearchClearBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
@@ -1204,15 +1204,20 @@
       renderSkuTableRows(currentFilteredSkuList);
     }
 
+    let currentDropdownIndex = -1;
+    let currentMatchedDropdownItems = [];
+
     function onProductSearchInput(val) {
       const clearBtn = document.getElementById('skuSearchClearBtn');
       const dropdown = document.getElementById('skuAutocompleteDropdown');
       const query = val.trim().toLowerCase();
+      currentDropdownIndex = -1;
 
       if (!query) {
         clearBtn.classList.add('hidden');
         dropdown.classList.add('hidden');
         dropdown.innerHTML = '';
+        currentMatchedDropdownItems = [];
         currentSkuVisibleCount = 10;
         filterSkuTable();
         return;
@@ -1225,10 +1230,12 @@
         item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query)
       ).slice(0, 15);
 
+      currentMatchedDropdownItems = matched;
+
       if (matched.length > 0) {
         dropdown.classList.remove('hidden');
-        dropdown.innerHTML = matched.map(m => `
-          <div onclick="selectSkuItem('${m.sku}')" class="px-3.5 py-2 hover:bg-rose-50/70 transition flex items-center justify-between cursor-pointer">
+        dropdown.innerHTML = matched.map((m, idx) => `
+          <div id="autocomplete-item-${idx}" onclick="selectSkuItem('${m.sku}')" onmouseenter="setDropdownHover(${idx})" class="autocomplete-item px-3.5 py-2 hover:bg-rose-50/70 transition flex items-center justify-between cursor-pointer">
             <div class="flex items-center gap-2">
               <span class="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">${m.sku}</span>
               <span class="font-semibold text-slate-800">${m.name}</span>
@@ -1245,6 +1252,62 @@
       filterSkuTable();
     }
 
+    function setDropdownHover(idx) {
+      currentDropdownIndex = idx;
+      const items = document.querySelectorAll('.autocomplete-item');
+      items.forEach((item, i) => {
+        if (i === idx) {
+          item.classList.add('bg-rose-50', 'text-rose-900');
+        } else {
+          item.classList.remove('bg-rose-50', 'text-rose-900');
+        }
+      });
+    }
+
+    function onProductSearchKeyDown(e) {
+      const dropdown = document.getElementById('skuAutocompleteDropdown');
+      const items = dropdown.querySelectorAll('.autocomplete-item');
+
+      if (dropdown.classList.contains('hidden') || items.length === 0) {
+        if (e.key === 'Enter') {
+          filterSkuTable();
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentDropdownIndex = (currentDropdownIndex + 1) % items.length;
+        updateDropdownHighlight(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentDropdownIndex = (currentDropdownIndex - 1 + items.length) % items.length;
+        updateDropdownHighlight(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentDropdownIndex >= 0 && currentDropdownIndex < currentMatchedDropdownItems.length) {
+          selectSkuItem(currentMatchedDropdownItems[currentDropdownIndex].sku);
+        } else {
+          dropdown.classList.add('hidden');
+          filterSkuTable();
+        }
+      } else if (e.key === 'Escape') {
+        dropdown.classList.add('hidden');
+        currentDropdownIndex = -1;
+      }
+    }
+
+    function updateDropdownHighlight(items) {
+      items.forEach((item, idx) => {
+        if (idx === currentDropdownIndex) {
+          item.classList.add('bg-rose-100', 'text-rose-900', 'font-bold');
+          item.scrollIntoView({ block: 'nearest' });
+        } else {
+          item.classList.remove('bg-rose-100', 'text-rose-900', 'font-bold');
+        }
+      });
+    }
+
     function selectSkuItem(skuCode) {
       const sourceList = (CURRENT_PERIOD_LIST.length > 0) ? CURRENT_PERIOD_LIST : SKU_MASTER_DATABASE;
       const item = sourceList.find(s => s.sku === skuCode);
@@ -1252,6 +1315,7 @@
         document.getElementById('skuSearchInput').value = item.name;
         document.getElementById('skuAutocompleteDropdown').classList.add('hidden');
         document.getElementById('skuSearchClearBtn').classList.remove('hidden');
+        currentDropdownIndex = -1;
         currentSkuVisibleCount = 10;
         filterSkuTable();
       }
@@ -1262,6 +1326,8 @@
       document.getElementById('skuSearchClearBtn').classList.add('hidden');
       document.getElementById('skuAutocompleteDropdown').classList.add('hidden');
       document.getElementById('csCategoryFilter').value = 'ALL';
+      currentDropdownIndex = -1;
+      currentMatchedDropdownItems = [];
       currentSkuVisibleCount = 10;
       filterSkuTable();
     }
