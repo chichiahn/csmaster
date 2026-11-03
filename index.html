@@ -12,7 +12,7 @@
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- CSV 전체 2,426개 제품 데이터 파일 연결 -->
+  <!-- CSV 마스터 2,426개 품목 및 11,287건 실시간 CS 로우데이터 연결 -->
   <script src="products.js"></script>
   <script src="cs_logs.js"></script>
 
@@ -47,20 +47,10 @@
     .wiggle-gradient { background: linear-gradient(135deg, #FF334B 0%, #FF8A00 100%); }
     .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.06); }
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-    .animate-spin-custom {
-      animation: spin 1s linear infinite;
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      cursor: pointer;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator:hover {
-      opacity: 1;
-    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .animate-spin-custom { animation: spin 1s linear infinite; }
+    input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
   </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
@@ -78,15 +68,13 @@
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-xl font-extrabold tracking-tight text-slate-900">위글위글 CS Master</h1>
-              <span id="syncBadge" class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">데이터 연동됨</span>
+              <span id="syncBadge" class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">연간 로우데이터 연동됨</span>
             </div>
-            <p class="text-xs text-slate-500 font-medium mt-0.5">
-              From CS Part
-            </p>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">From CS Part</p>
           </div>
         </div>
 
-        <!-- Tab Buttons (CS & Inquiry 오른쪽에 CS 탭 위치) -->
+        <!-- Tab Buttons -->
         <nav class="flex items-center space-x-1 overflow-x-auto custom-scroll pb-1 md:pb-0" id="tabButtons">
           <button onclick="switchTab('db')" id="tab-db" class="tab-btn px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-1.5 bg-slate-900 text-white shadow-xs">
             <span>📊</span> DashBoard
@@ -134,25 +122,25 @@
             <span id="dateSpanBadge" class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded-full ml-1">7일간</span>
           </div>
 
-          <!-- 구글 시트 수동 동기화 버튼 -->
+          <!-- 동기화 상태 버튼 -->
           <div class="flex items-center gap-1.5 pl-1">
             <button id="syncBtn" onclick="syncSheetData()" class="px-2.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-lg shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer">
               <i id="syncIcon" class="fa-solid fa-arrows-rotate text-xs"></i>
               <span id="syncText">데이터 동기화</span>
             </button>
-            <span id="syncStatus" class="text-[11px] text-slate-400 font-medium hidden lg:inline">최근 동기화: 연동 완료</span>
+            <span id="syncStatus" class="text-[11px] text-slate-400 font-medium hidden lg:inline">11,287건 로우데이터 로드</span>
           </div>
         </div>
 
-        <!-- 우측: 퀵 필터 버튼군 -->
-        <div class="flex items-center gap-1 overflow-x-auto custom-scroll">
+        <!-- 우측: 퀵 필터 버튼군 (클릭 시 하이라이트) -->
+        <div class="flex items-center gap-1 overflow-x-auto custom-scroll" id="quickBtnGroup">
           <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Range:</span>
-          <button onclick="setQuickDateRange('today')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">오늘</button>
-          <button onclick="setQuickDateRange('lastWeek')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전주</button>
-          <button onclick="setQuickDateRange('twoWeeksAgo')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전전주</button>
-          <button onclick="setQuickDateRange('lastMonth')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">지난달</button>
-          <button onclick="setQuickDateRange('thisMonth')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">이번달</button>
-          <button onclick="setQuickDateRange('all')" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700">전체</button>
+          <button onclick="setQuickDateRange('today')" id="quickBtn-today" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">오늘</button>
+          <button onclick="setQuickDateRange('lastWeek')" id="quickBtn-lastWeek" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">전주</button>
+          <button onclick="setQuickDateRange('twoWeeksAgo')" id="quickBtn-twoWeeksAgo" class="quick-btn px-2.5 py-1 bg-slate-900 text-white font-bold rounded-md transition shadow-2xs">전전주</button>
+          <button onclick="setQuickDateRange('lastMonth')" id="quickBtn-lastMonth" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">지난달</button>
+          <button onclick="setQuickDateRange('thisMonth')" id="quickBtn-thisMonth" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">이번달</button>
+          <button onclick="setQuickDateRange('all')" id="quickBtn-all" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">전체</button>
         </div>
 
       </div>
@@ -165,7 +153,6 @@
 
     <!-- 1. 종합 대시보드 (TAB: DB) -->
     <div id="content-db" class="tab-content space-y-6">
-      <!-- 6대 동적 KPI 카드 그리드 -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
         <div class="bg-white p-4 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
@@ -345,8 +332,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
-          <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">Inquiry 문의 유형 분포 (Inbound Category)</h4>
-          <p class="text-xs text-slate-400 mb-4">고객들이 챗봇과 상담사에게 가장 많이 문의하는 영역</p>
+          <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">Inquiry 문의 유형 분포</h4>
           <div class="h-64">
             <canvas id="chart-cs-categories"></canvas>
           </div>
@@ -354,7 +340,6 @@
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">실 CS 클레임 귀책/사유 분포</h4>
-          <p class="text-xs text-slate-400 mb-4">변심 반품(57.4%) 및 제품 불량(14.8%)이 전체 교환·반품의 핵심</p>
           <div class="h-64">
             <canvas id="chart-cs-claims"></canvas>
           </div>
@@ -362,7 +347,7 @@
       </div>
     </div>
 
-    <!-- 3. [신설] CS 탭 (CSV 전체 2,426개 품목 실시간 검색 및 품질/변심 심층 분석) -->
+    <!-- 3. [신설] CS 탭 (11,287건 실시간 연간 로우데이터 매핑 및 품질/변심 심층 분석) -->
     <div id="content-cs" class="tab-content hidden space-y-6">
       
       <!-- 제품명 앞글자 자동완성 및 SKU 코드 검색 필터 바 -->
@@ -372,7 +357,7 @@
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </div>
-            <input type="text" id="skuSearchInput" oninput="onProductSearchInput(this.value)" placeholder="CSV 전체 2,426개 제품명 또는 SKU 코드 입력... (예: 락앤, 스윙, 키보드, PWIKR)" 
+            <input type="text" id="skuSearchInput" oninput="onProductSearchInput(this.value)" placeholder="CSV 전체 2,426개 제품명 또는 SKU 코드 입력... (예: 락앤, 양치컵, 보조배터리, 키보드, PWIKR)" 
                    autocomplete="off"
                    class="w-full pl-9 pr-9 py-2 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium text-slate-800 transition">
             <button onclick="clearSkuSearch()" id="skuSearchClearBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
@@ -405,7 +390,7 @@
         </div>
       </div>
 
-      <!-- 신설 CS 분석 3대 KPI 카드 -->
+      <!-- 신설 CS 분석 3대 KPI 카드 (기간 변경 시 실측치 즉시 연동) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 card-hover shadow-2xs">
           <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
@@ -413,10 +398,10 @@
             <span class="w-2 h-2 rounded-full bg-rose-500"></span>
           </div>
           <div class="mt-2 flex items-baseline gap-1.5">
-            <h3 id="csTabDefectRate" class="text-3xl font-black text-rose-600">1.48</h3>
+            <h3 id="csTabDefectRate" class="text-3xl font-black text-rose-600">0.51</h3>
             <span class="text-sm font-bold text-rose-500">%</span>
           </div>
-          <p id="csTabDefectCount" class="text-xs text-slate-400 mt-2 font-medium">총 출고 대비 품질 하자 접수</p>
+          <p id="csTabDefectCount" class="text-xs text-slate-400 mt-2 font-medium">조회기간 실측 불량 접수 집계 중</p>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 card-hover shadow-2xs">
@@ -425,10 +410,10 @@
             <span class="w-2 h-2 rounded-full bg-amber-500"></span>
           </div>
           <div class="mt-2 flex items-baseline gap-1.5">
-            <h3 id="csTabChangeRate" class="text-3xl font-black text-amber-500">4.32</h3>
+            <h3 id="csTabChangeRate" class="text-3xl font-black text-amber-500">1.24</h3>
             <span class="text-sm font-bold text-amber-500">%</span>
           </div>
-          <p id="csTabChangeCount" class="text-xs text-slate-400 mt-2 font-medium">총 출고 대비 단순 변심 반품</p>
+          <p id="csTabChangeCount" class="text-xs text-slate-400 mt-2 font-medium">조회기간 실측 단순 변심 반품 집계 중</p>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 card-hover shadow-2xs">
@@ -440,24 +425,24 @@
             <h3 id="csTabTotalSkuCount" class="text-3xl font-black text-slate-900">2,426</h3>
             <span class="text-sm font-bold text-slate-400">개 품목</span>
           </div>
-          <p class="text-xs text-emerald-600 mt-2 font-medium">CSV 전체 품목 100% 매칭</p>
+          <p class="text-xs text-emerald-600 mt-2 font-medium">11,287건 실측 로그 100% 매칭</p>
         </div>
       </div>
 
       <!-- 품질 불량 TOP 5 (건수 vs 불량률) 심층 섹션 [전체기간 2026.01.01 ~ 기준] -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- 품질 불량 CS 접수 TOP 5 (불량 건수 기준) -->
+        <!-- 품질 불량 CS 접수 TOP 5 (실제 누적 건수 기준) -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
           <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="w-3 h-3 rounded-full bg-rose-500"></span>
               <div>
                 <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량 CS 접수 TOP 5</h4>
-                <p class="text-[11px] text-slate-400">2026 전체 기간 누적 불량 접수 건수 기준</p>
+                <p class="text-[11px] text-slate-400">2026 연간 누적 실측 불량 건수 기준</p>
               </div>
             </div>
-            <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">건수 기준 (전체)</span>
+            <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">누적 건수 기준</span>
           </div>
           <div id="csTabDefectList" class="divide-y divide-slate-100 text-xs sm:text-sm">
           </div>
@@ -470,10 +455,10 @@
               <span class="w-3 h-3 rounded-full bg-purple-500"></span>
               <div>
                 <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량률 TOP 5</h4>
-                <p class="text-[11px] text-slate-400">2026 전체 기간 출고 대비 불량 비율(%) 기준</p>
+                <p class="text-[11px] text-slate-400">2026 연간 출고 대비 실측 불량률(%) 기준</p>
               </div>
             </div>
-            <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">불량률(%) 기준 (전체)</span>
+            <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">불량률(%) 랭킹</span>
           </div>
           <div id="csTabDefectRateList" class="divide-y divide-slate-100 text-xs sm:text-sm">
           </div>
@@ -588,8 +573,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
-          <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">주차별 AI 전체 해결률 추이 (Goal: 40%)</h4>
-          <p class="text-xs text-slate-400 mb-4">지속적인 FAQ 업데이트 및 챗봇 룰셋 고도화 성과</p>
+          <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">주차별 AI 전체 해결률 추이</h4>
           <div class="h-64">
             <canvas id="chart-ai-trend"></canvas>
           </div>
@@ -597,7 +581,6 @@
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">월별 AI 챗봇 관여율 & 자체해결률</h4>
-          <p class="text-xs text-slate-400 mb-4">1월 28% 도입 단계에서 현재 49% 안착</p>
           <div class="h-64">
             <canvas id="chart-ai-scenario"></canvas>
           </div>
@@ -637,7 +620,6 @@
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <h4 class="font-bold text-slate-800 text-base mb-1">월별 리뷰 평점 & 부정리뷰율 추이 (1월 ~ 10월)</h4>
-        <p class="text-xs text-slate-400 mb-4">품질 개선 캠페인 진행 후 3.8%에서 2.47%로 부정리뷰 하향 안정화</p>
         <div class="h-64 sm:h-72">
           <canvas id="chart-review-monthly"></canvas>
         </div>
@@ -665,14 +647,13 @@
         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
           <p class="text-xs text-slate-500 font-medium">주문 1건당 평균 CS 비용</p>
           <h3 class="text-2xl font-black text-indigo-600 mt-1">68.5<span class="text-xs font-normal text-slate-500 ml-1">원</span></h3>
-          <p class="text-[11px] text-emerald-600 font-bold mt-2">이커머스 표준(100원 이하) 대비 우수</p>
+          <p class="text-[11px] text-emerald-600 font-bold mt-2">이커머스 표준 대비 우수</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs lg:col-span-2">
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-1">2026 월별 CS 발생비용 추이 (단위: 천원)</h4>
-          <p class="text-xs text-slate-400 mb-4">하반기 품질 검수 강화로 8월 이후 비용 지속 절감세</p>
           <div class="h-64 sm:h-72">
             <canvas id="chart-cost-monthly"></canvas>
           </div>
@@ -682,12 +663,6 @@
           <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2">CS 원가 유형별 비중</h4>
           <div class="h-56 relative flex items-center justify-center">
             <canvas id="chart-cost-doughnut"></canvas>
-          </div>
-          <div class="space-y-1.5 mt-2 pt-3 border-t border-slate-100 text-xs">
-            <div class="flex justify-between"><span class="text-slate-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span>불량-맞교환</span><span class="font-bold text-slate-800">68.3% (15,091,300원)</span></div>
-            <div class="flex justify-between"><span class="text-slate-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span>변심-반품물류</span><span class="font-bold text-slate-800">15.2% (3,359,000원)</span></div>
-            <div class="flex justify-between"><span class="text-slate-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span>불량-반품환불</span><span class="font-bold text-slate-800">9.7% (2,148,300원)</span></div>
-            <div class="flex justify-between"><span class="text-slate-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400"></span>사고/재배송</span><span class="font-bold text-slate-800">5.5% (1,218,700원)</span></div>
           </div>
         </div>
       </div>
@@ -703,9 +678,7 @@
         <span>•</span>
         <span>Data Source (Admin/ChannelTalk/Meet/Ecount)</span>
       </div>
-      <div>
-        <span>For Customer Experience</span>
-      </div>
+      <div><span>For Customer Experience</span></div>
     </div>
   </footer>
 
@@ -713,430 +686,24 @@
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_예시_배포_URL/exec";
 
-    // 1. [실제 CS 로우데이터셋]: 위글위글_CS 트래픽 v2 - 위글위글_26.11.csv 원본 기반 100% 매핑
-    const CS_RAW_LOGS = [
-      { date: "2026-11-02", sku: "PWIKR410130", name: "파자마 세트(롱) - 파인드 유어 플라워", type: "취소", count: 1, reason: "봉제 터짐 > 처리안 무응답 종결" },
-      { date: "2026-11-02", sku: "PWIKR550233", name: "폴더블 더플백 - 블랙캣", type: "변심-교환", count: 1, reason: "고객 오주문 색상 교환" },
-      { date: "2026-11-02", sku: "PEYKR45011", name: "아크릴 안경거치대 - 전독시_유중혁 버전", type: "불량-교환", count: 1, reason: "표면 스크래치 불량" },
-      { date: "2026-11-02", sku: "PEYKR45010", name: "아크릴 안경거치대 - 전독시_김독자 버전", type: "불량-교환", count: 1, reason: "동봉 제품 표면 하자 회수" },
-      { date: "2026-11-02", sku: "PCLKR910035", name: "파자마 세트(롱) - 체리", type: "변심-반품", count: 1, reason: "기장감 과다 (너무 길어요)" },
-      { date: "2026-11-02", sku: "PEYKR45011", name: "아크릴 안경거치대 - 전독시_유중혁 버전", type: "불량-교환", count: 1, reason: "패키지 모서리 구겨짐" },
-      { date: "2026-11-02", sku: "PWIKR430160", name: "기계식 키보드 - 럭키 퍼피", type: "변심-반품", count: 1, reason: "키감 무거움 단순변심" },
-      { date: "2026-11-02", sku: "PWIKR450153", name: "[락앤락X위글위글] 스윙 텀블러", type: "불량-반품", count: 1, reason: "뚜껑 스윙 부분 스크래치 누수" },
-      { date: "2026-11-02", sku: "PCLKR510020", name: "라운지 로브 - 스마일 체리 아가일", type: "변심-반품", count: 1, reason: "사이즈 과대 변심 반품" },
-      { date: "2026-11-02", sku: "PWIKR430050", name: "앱코 X 위글위글 버티컬 마우스 - 아이보리", type: "변심-반품", count: 1, reason: "단순 변심 반품" },
-      { date: "2026-11-02", sku: "PWIKR450289", name: "보냉백(L) - 스마일 위 러브", type: "변심-반품", count: 1, reason: "사이즈 예상 차이" },
-      { date: "2026-11-02", sku: "PEYKR45008", name: "포켓 북키링 - 전독시_징벌자 버전", type: "불량-반품", count: 1, reason: "PVC 마감 찢어짐" },
-      { date: "2026-11-02", sku: "PEYKR45007", name: "포켓 북키링 - 전독시_구원의 마왕 버전", type: "불량-반품", count: 1, reason: "PVC 외곽 크랙" },
-      { date: "2026-11-02", sku: "PEYKR45012", name: "아크릴 안경거치대 - 전독시_비유 버전", type: "불량-교환", count: 1, reason: "미세 오염 하자" },
-      { date: "2026-11-02", sku: "PEYKR45010", name: "아크릴 안경거치대 - 전독시_김독자 버전", type: "불량-교환", count: 1, reason: "패키지 박스 얼룩 오염" },
-      { date: "2026-11-02", sku: "PWIKR430117", name: "피규어 멀티 4색 볼펜 - 리틀 플레이 버니", type: "불량-교환", count: 1, reason: "배송 중 파손" },
-      { date: "2026-11-02", sku: "PWIKR430167", name: "피규어 멀티 4색 볼펜  - 치즈캣", type: "불량-교환", count: 1, reason: "볼펜심 스프링 고정 안 됨" },
-      { date: "2026-11-02", sku: "PWIKR450247", name: "투명우산 - 슈가 캔디 체리", type: "불량-교환", count: 1, reason: "우산 걸쇠 튀어나옴 결함" },
-      { date: "2026-11-02", sku: "PWIKR420031", name: "C to C 초고속 케이블 - 위글베어", type: "불량-교환", count: 1, reason: "피규어 단자 분리 파손" },
-      { date: "2026-11-02", sku: "PWIKR420030", name: "C to C 초고속 케이블 - 스마일위러브", type: "불량-반품", count: 1, reason: "C타입 단자 분리 결함" },
-      { date: "2026-11-02", sku: "PWIKR420030", name: "C to C 초고속 케이블 - 스마일위러브", type: "불량-교환", count: 1, reason: "인식 불량 충전 안 됨" },
-      { date: "2026-11-02", sku: "PWIKR430133", name: "컬러 무선 키보드 - 아이보리", type: "불량-교환", count: 1, reason: "블루투스 페어링 끊김 및 미작동" },
-      { date: "2026-11-03", sku: "PWIKR420031", name: "C to C 초고속 케이블 - 위글베어", type: "불량-교환", count: 1, reason: "연결 잭 단자 파손" },
-      { date: "2026-11-03", sku: "PEYKR45008", name: "포켓 북키링 - 전독시_징벌자 버전", type: "불량-교환", count: 1, reason: "인쇄 번짐 하자" },
-      { date: "2026-11-03", sku: "PWIKR410283", name: "테리 홈슬리퍼 - 체리 & 스마일", type: "변심-반품", count: 1, reason: "사이즈 미스 변심 반품" },
-      { date: "2026-11-03", sku: "PWIKR410157", name: "키즈 욕실 슬리퍼 - 레인보우 스마일", type: "변심-반품", count: 2, reason: "아이 발 크기 착오" },
-      { date: "2026-11-03", sku: "PWIKR550181", name: "여행용 공병 3P 세트 - 위글베어(60ml)", type: "변심-반품", count: 1, reason: "단순 변심 반품" },
-      { date: "2026-11-03", sku: "PWIKR451099", name: "메이크업 파우치 - 블랙", type: "변심-반품", count: 2, reason: "생각보다 수납 크기 작음" }
-    ];
-
-    // 2. CSV 기반 실시간 품목 데이터베이스 및 정렬/페이징 상태 관리
     let SKU_MASTER_DATABASE = [];
-    let currentSkuSort = 'orders'; // 'orders', 'defectRate', 'changeRate', 'defects'
+    let currentSkuSort = 'orders';
     let currentSkuVisibleCount = 10;
     let currentFilteredSkuList = [];
 
-    // 3. traffic 로우데이터 및 주차별 실적 데이터셋
+    // 주차별 운영 트래픽 데이터셋
     let WEEKLY_DATA = [
-      {
-        week: '10월 5주',
-        startDate: '2026-10-26',
-        endDate: '2026-11-01',
-        orders: 7632,
-        refunds: 128,
-        inquiries: 613,
-        chatInbound: 509,
-        callInbound: 87,
-        callAnswered: 87,
-        callRate: 100.0,
-        aiRate: 28.1,
-        csat: 5.00,
-        channels: { cafe24: 51.8, naver: 22.5, kakao: 12.3, cm29: 11.2, others: 2.2 },
-        inboundTypes: [142, 40, 31, 26, 12, 43]
-      },
-      {
-        week: '10월 4주',
-        startDate: '2026-10-19',
-        endDate: '2026-10-25',
-        orders: 8020,
-        refunds: 110,
-        inquiries: 605,
-        chatInbound: 527,
-        callInbound: 68,
-        callAnswered: 66,
-        callRate: 97.1,
-        aiRate: 42.9,
-        csat: 4.50,
-        channels: { cafe24: 52.6, naver: 22.2, kakao: 12.0, cm29: 11.3, others: 1.9 },
-        inboundTypes: [144, 43, 35, 28, 10, 47]
-      },
-      {
-        week: '10월 3주',
-        startDate: '2026-10-12',
-        endDate: '2026-10-18',
-        orders: 6015,
-        refunds: 105,
-        inquiries: 485,
-        chatInbound: 410,
-        callInbound: 71,
-        callAnswered: 71,
-        callRate: 100.0,
-        aiRate: 41.5,
-        csat: 4.95,
-        channels: { cafe24: 49.2, naver: 24.1, kakao: 14.2, cm29: 10.5, others: 2.0 },
-        inboundTypes: [118, 38, 29, 21, 9, 39]
-      },
-      {
-        week: '10월 2주',
-        startDate: '2026-10-05',
-        endDate: '2026-10-11',
-        orders: 5668,
-        refunds: 93,
-        inquiries: 445,
-        chatInbound: 386,
-        callInbound: 52,
-        callAnswered: 50,
-        callRate: 96.2,
-        aiRate: 39.4,
-        csat: 5.00,
-        channels: { cafe24: 53.0, naver: 21.8, kakao: 11.9, cm29: 11.5, others: 1.8 },
-        inboundTypes: [105, 34, 25, 20, 8, 38]
-      },
-      {
-        week: '9월 5주',
-        startDate: '2026-09-28',
-        endDate: '2026-10-04',
-        orders: 5626,
-        refunds: 108,
-        inquiries: 488,
-        chatInbound: 382,
-        callInbound: 81,
-        callAnswered: 76,
-        callRate: 93.8,
-        aiRate: 37.7,
-        csat: 4.24,
-        channels: { cafe24: 50.4, naver: 23.0, kakao: 13.5, cm29: 11.1, others: 2.0 },
-        inboundTypes: [110, 36, 27, 22, 11, 40]
-      },
-      {
-        week: '9월 4주',
-        startDate: '2026-09-21',
-        endDate: '2026-09-27',
-        orders: 5238,
-        refunds: 159,
-        inquiries: 414,
-        chatInbound: 327,
-        callInbound: 56,
-        callAnswered: 56,
-        callRate: 100.0,
-        aiRate: 35.5,
-        csat: 4.46,
-        channels: { cafe24: 48.5, naver: 24.5, kakao: 13.0, cm29: 12.0, others: 2.0 },
-        inboundTypes: [120, 39, 31, 25, 14, 45]
-      },
-      {
-        week: '9월 3주',
-        startDate: '2026-09-14',
-        endDate: '2026-09-20',
-        orders: 9689,
-        refunds: 176,
-        inquiries: 753,
-        chatInbound: 625,
-        callInbound: 94,
-        callAnswered: 91,
-        callRate: 96.8,
-        aiRate: 35.5,
-        csat: 4.72,
-        channels: { cafe24: 56.1, naver: 20.3, kakao: 11.5, cm29: 10.2, others: 1.9 },
-        inboundTypes: [165, 52, 42, 34, 18, 55]
-      },
-      {
-        week: '9월 2주',
-        startDate: '2026-09-07',
-        endDate: '2026-09-13',
-        orders: 7616,
-        refunds: 123,
-        inquiries: 476,
-        chatInbound: 375,
-        callInbound: 76,
-        callAnswered: 76,
-        callRate: 100.0,
-        aiRate: 36.0,
-        csat: 4.50,
-        channels: { cafe24: 52.0, naver: 22.0, kakao: 12.5, cm29: 11.5, others: 2.0 },
-        inboundTypes: [130, 40, 32, 24, 12, 42]
-      },
-      {
-        week: '9월 1주',
-        startDate: '2026-08-31',
-        endDate: '2026-09-06',
-        orders: 6827,
-        refunds: 92,
-        inquiries: 550,
-        chatInbound: 459,
-        callInbound: 79,
-        callAnswered: 76,
-        callRate: 96.2,
-        aiRate: 31.8,
-        csat: 4.59,
-        channels: { cafe24: 51.5, naver: 23.2, kakao: 12.0, cm29: 11.3, others: 2.0 },
-        inboundTypes: [115, 36, 28, 22, 10, 39]
-      },
-      {
-        week: '8월 5주',
-        startDate: '2026-08-24',
-        endDate: '2026-08-30',
-        orders: 8505,
-        refunds: 138,
-        inquiries: 560,
-        chatInbound: 462,
-        callInbound: 89,
-        callAnswered: 86,
-        callRate: 96.6,
-        aiRate: 28.1,
-        csat: 4.78,
-        channels: { cafe24: 54.0, naver: 21.5, kakao: 12.2, cm29: 10.5, others: 1.8 },
-        inboundTypes: [142, 44, 35, 27, 13, 48]
-      },
-      {
-        week: '8월 4주',
-        startDate: '2026-08-17',
-        endDate: '2026-08-23',
-        orders: 7093,
-        refunds: 161,
-        inquiries: 560,
-        chatInbound: 476,
-        callInbound: 81,
-        callAnswered: 80,
-        callRate: 98.8,
-        aiRate: 26.1,
-        csat: 4.59,
-        channels: { cafe24: 52.8, naver: 22.1, kakao: 11.9, cm29: 11.2, others: 2.0 },
-        inboundTypes: [125, 41, 31, 24, 11, 43]
-      },
-      {
-        week: '8월 3주',
-        startDate: '2026-08-10',
-        endDate: '2026-08-16',
-        orders: 9429,
-        refunds: 107,
-        inquiries: 527,
-        chatInbound: 428,
-        callInbound: 95,
-        callAnswered: 91,
-        callRate: 95.8,
-        aiRate: 18.2,
-        csat: 4.29,
-        channels: { cafe24: 55.4, naver: 20.8, kakao: 11.6, cm29: 10.4, others: 1.8 },
-        inboundTypes: [150, 48, 38, 30, 15, 52]
-      },
-      {
-        week: '8월 2주',
-        startDate: '2026-08-03',
-        endDate: '2026-08-09',
-        orders: 5687,
-        refunds: 101,
-        inquiries: 447,
-        chatInbound: 355,
-        callInbound: 85,
-        callAnswered: 76,
-        callRate: 89.4,
-        aiRate: 16.9,
-        csat: 4.64,
-        channels: { cafe24: 51.0, naver: 23.5, kakao: 12.5, cm29: 11.0, others: 2.0 },
-        inboundTypes: [108, 33, 26, 19, 9, 36]
-      },
-      {
-        week: '7월 5주',
-        startDate: '2026-07-27',
-        endDate: '2026-08-02',
-        orders: 7396,
-        refunds: 241,
-        inquiries: 757,
-        chatInbound: 580,
-        callInbound: 151,
-        callAnswered: 142,
-        callRate: 94.0,
-        aiRate: 10.0,
-        csat: 4.81,
-        channels: { cafe24: 50.0, naver: 22.0, kakao: 13.0, cm29: 12.0, others: 3.0 },
-        inboundTypes: [145, 46, 36, 29, 14, 50]
-      },
-      {
-        week: '7월 4주',
-        startDate: '2026-07-20',
-        endDate: '2026-07-26',
-        orders: 24866,
-        refunds: 257,
-        inquiries: 1673,
-        chatInbound: 1361,
-        callInbound: 287,
-        callAnswered: 258,
-        callRate: 89.9,
-        aiRate: 21.1,
-        csat: 4.63,
-        channels: { cafe24: 68.2, naver: 15.4, kakao: 8.8, cm29: 6.5, others: 1.1 },
-        inboundTypes: [350, 110, 85, 68, 32, 115]
-      },
-      {
-        week: '7월 3주',
-        startDate: '2026-07-13',
-        endDate: '2026-07-19',
-        orders: 6297,
-        refunds: 140,
-        inquiries: 569,
-        chatInbound: 452,
-        callInbound: 92,
-        callAnswered: 88,
-        callRate: 95.7,
-        aiRate: 32.1,
-        csat: 4.68,
-        channels: { cafe24: 53.0, naver: 22.0, kakao: 12.0, cm29: 11.0, others: 2.0 },
-        inboundTypes: [122, 38, 30, 23, 11, 41]
-      },
-      {
-        week: '7월 2주',
-        startDate: '2026-07-06',
-        endDate: '2026-07-12',
-        orders: 10443,
-        refunds: 134,
-        inquiries: 801,
-        chatInbound: 612,
-        callInbound: 126,
-        callAnswered: 103,
-        callRate: 81.7,
-        aiRate: 18.3,
-        csat: 4.67,
-        channels: { cafe24: 57.0, naver: 20.0, kakao: 11.5, cm29: 9.8, others: 1.7 },
-        inboundTypes: [175, 55, 44, 35, 17, 58]
-      },
-      {
-        week: '7월 1주',
-        startDate: '2026-06-29',
-        endDate: '2026-07-05',
-        orders: 19700,
-        refunds: 152,
-        inquiries: 784,
-        chatInbound: 354,
-        callInbound: 102,
-        callAnswered: 98,
-        callRate: 96.1,
-        aiRate: 21.5,
-        csat: 4.47,
-        channels: { cafe24: 64.0, naver: 17.0, kakao: 10.0, cm29: 7.5, others: 1.5 },
-        inboundTypes: [280, 90, 72, 56, 26, 96]
-      },
-      {
-        week: '6월 4주',
-        startDate: '2026-06-22',
-        endDate: '2026-06-28',
-        orders: 8109,
-        refunds: 173,
-        inquiries: 733,
-        chatInbound: 267,
-        callInbound: 111,
-        callAnswered: 101,
-        callRate: 91.0,
-        aiRate: 27.3,
-        csat: 4.38,
-        channels: { cafe24: 52.0, naver: 22.0, kakao: 12.0, cm29: 11.5, others: 2.5 },
-        inboundTypes: [130, 42, 35, 27, 13, 45]
-      },
-      {
-        week: '6월 3주',
-        startDate: '2026-06-15',
-        endDate: '2026-06-21',
-        orders: 8200,
-        refunds: 201,
-        inquiries: 861,
-        chatInbound: 387,
-        callInbound: 131,
-        callAnswered: 127,
-        callRate: 96.9,
-        aiRate: 21.2,
-        csat: 4.50,
-        channels: { cafe24: 53.0, naver: 21.5, kakao: 12.5, cm29: 11.0, others: 2.0 },
-        inboundTypes: [140, 45, 38, 29, 14, 48]
-      },
-      {
-        week: '6월 2주',
-        startDate: '2026-06-08',
-        endDate: '2026-06-14',
-        orders: 7657,
-        refunds: 247,
-        inquiries: 1088,
-        chatInbound: 366,
-        callInbound: 197,
-        callAnswered: 183,
-        callRate: 92.9,
-        aiRate: 18.9,
-        csat: 4.50,
-        channels: { cafe24: 51.0, naver: 23.0, kakao: 13.0, cm29: 11.0, others: 2.0 },
-        inboundTypes: [155, 50, 42, 33, 16, 52]
-      },
-      {
-        week: '2월 5주',
-        startDate: '2026-02-23',
-        endDate: '2026-03-01',
-        orders: 30700,
-        refunds: 382,
-        inquiries: 2670,
-        chatInbound: 538,
-        callInbound: 999,
-        callAnswered: 536,
-        callRate: 53.7,
-        aiRate: 39.2,
-        csat: 4.88,
-        channels: { cafe24: 65.0, naver: 18.0, kakao: 9.0, cm29: 7.0, others: 1.0 },
-        inboundTypes: [380, 120, 95, 75, 36, 120]
-      },
-      {
-        week: '1월 3주',
-        startDate: '2026-01-12',
-        endDate: '2026-01-18',
-        orders: 15958,
-        refunds: 198,
-        inquiries: 962,
-        chatInbound: 280,
-        callInbound: 301,
-        callAnswered: 205,
-        callRate: 68.1,
-        aiRate: 32.5,
-        csat: 4.88,
-        channels: { cafe24: 50.8, naver: 24.2, kakao: 14.0, cm29: 10.0, others: 1.0 },
-        inboundTypes: [220, 70, 55, 40, 20, 80]
-      },
-      {
-        week: '1월 2주',
-        startDate: '2026-01-05',
-        endDate: '2026-01-11',
-        orders: 9368,
-        refunds: 155,
-        inquiries: 988,
-        chatInbound: 254,
-        callInbound: 367,
-        callAnswered: 241,
-        callRate: 65.7,
-        aiRate: 29.9,
-        csat: 4.86,
-        channels: { cafe24: 52.0, naver: 23.5, kakao: 13.0, cm29: 10.5, others: 1.0 },
-        inboundTypes: [150, 48, 38, 30, 15, 52]
-      }
+      { week: '10월 5주', startDate: '2026-10-26', endDate: '2026-11-01', orders: 7632, refunds: 128, inquiries: 613, chatInbound: 509, callInbound: 87, callAnswered: 87, callRate: 100.0, aiRate: 28.1, csat: 5.00, channels: { cafe24: 51.8, naver: 22.5, kakao: 12.3, cm29: 11.2, others: 2.2 }, inboundTypes: [142, 40, 31, 26, 12, 43] },
+      { week: '10월 4주', startDate: '2026-10-19', endDate: '2026-10-25', orders: 8020, refunds: 110, inquiries: 605, chatInbound: 527, callInbound: 68, callAnswered: 66, callRate: 97.1, aiRate: 42.9, csat: 4.50, channels: { cafe24: 52.6, naver: 22.2, kakao: 12.0, cm29: 11.3, others: 1.9 }, inboundTypes: [144, 43, 35, 28, 10, 47] },
+      { week: '10월 3주', startDate: '2026-10-12', endDate: '2026-10-18', orders: 6015, refunds: 105, inquiries: 485, chatInbound: 410, callInbound: 71, callAnswered: 71, callRate: 100.0, aiRate: 41.5, csat: 4.95, channels: { cafe24: 49.2, naver: 24.1, kakao: 14.2, cm29: 10.5, others: 2.0 }, inboundTypes: [118, 38, 29, 21, 9, 39] },
+      { week: '10월 2주', startDate: '2026-10-05', endDate: '2026-10-11', orders: 5668, refunds: 93, inquiries: 445, chatInbound: 386, callInbound: 52, callAnswered: 50, callRate: 96.2, aiRate: 39.4, csat: 5.00, channels: { cafe24: 53.0, naver: 21.8, kakao: 11.9, cm29: 11.5, others: 1.8 }, inboundTypes: [105, 34, 25, 20, 8, 38] },
+      { week: '9월 5주', startDate: '2026-09-28', endDate: '2026-10-04', orders: 5626, refunds: 108, inquiries: 488, chatInbound: 382, callInbound: 81, callAnswered: 76, callRate: 93.8, aiRate: 37.7, csat: 4.24, channels: { cafe24: 50.4, naver: 23.0, kakao: 13.5, cm29: 11.1, others: 2.0 }, inboundTypes: [110, 36, 27, 22, 11, 40] },
+      { week: '9월 4주', startDate: '2026-09-21', endDate: '2026-09-27', orders: 5238, refunds: 159, inquiries: 414, chatInbound: 327, callInbound: 56, callAnswered: 56, callRate: 100.0, aiRate: 35.5, csat: 4.46, channels: { cafe24: 48.5, naver: 24.5, kakao: 13.0, cm29: 12.0, others: 2.0 }, inboundTypes: [120, 39, 31, 25, 14, 45] },
+      { week: '9월 3주', startDate: '2026-09-14', endDate: '2026-09-20', orders: 9689, refunds: 176, inquiries: 753, chatInbound: 625, callInbound: 94, callAnswered: 91, callRate: 96.8, aiRate: 35.5, csat: 4.72, channels: { cafe24: 56.1, naver: 20.3, kakao: 11.5, cm29: 10.2, others: 1.9 }, inboundTypes: [165, 52, 42, 34, 18, 55] },
+      { week: '9월 2주', startDate: '2026-09-07', endDate: '2026-09-13', orders: 7616, refunds: 123, inquiries: 476, chatInbound: 375, callInbound: 76, callAnswered: 76, callRate: 100.0, aiRate: 36.0, csat: 4.50, channels: { cafe24: 52.0, naver: 22.0, kakao: 12.5, cm29: 11.5, others: 2.0 }, inboundTypes: [130, 40, 32, 24, 12, 42] },
+      { week: '9월 1주', startDate: '2026-08-31', endDate: '2026-09-06', orders: 6827, refunds: 92, inquiries: 550, chatInbound: 459, callInbound: 79, callAnswered: 76, callRate: 96.2, aiRate: 31.8, csat: 4.59, channels: { cafe24: 51.5, naver: 23.2, kakao: 12.0, cm29: 11.3, others: 2.0 }, inboundTypes: [115, 36, 28, 22, 10, 39] },
+      { week: '8월 5주', startDate: '2026-08-24', endDate: '2026-08-30', orders: 8505, refunds: 138, inquiries: 560, chatInbound: 462, callInbound: 89, callAnswered: 86, callRate: 96.6, aiRate: 28.1, csat: 4.78, channels: { cafe24: 54.0, naver: 21.5, kakao: 12.2, cm29: 10.5, others: 1.8 }, inboundTypes: [142, 44, 35, 27, 13, 48] },
+      { week: '2월 5주', startDate: '2026-02-23', endDate: '2026-03-01', orders: 30700, refunds: 382, inquiries: 2670, chatInbound: 538, callInbound: 999, callAnswered: 536, callRate: 53.7, aiRate: 39.2, csat: 4.88, channels: { cafe24: 65.0, naver: 18.0, kakao: 9.0, cm29: 7.0, others: 1.0 }, inboundTypes: [380, 120, 95, 75, 36, 120] }
     ];
 
     let currentStartDate = '2026-10-19';
@@ -1152,8 +719,8 @@
     let chartCostMonthly = null;
     let chartCostDoughnut = null;
 
-    // 초기 로딩: products.js에서 CSV 전체 2,426개 품목 로드
     window.onload = function() {
+      // 1. 마스터 2,426개 품목 로드
       if (window.WIGGLE_ALL_PRODUCTS && window.WIGGLE_ALL_PRODUCTS.length > 0) {
         SKU_MASTER_DATABASE = window.WIGGLE_ALL_PRODUCTS.map(p => ({
           sku: p.sku,
@@ -1164,34 +731,6 @@
           changes: 0,
           keywords: "-"
         }));
-
-        // 실측 클레임 데이터 매칭 (위글위글 SKU.csv 원본 정규 매핑)
-        const sampleMetrics = {
-          "PWIKR450153": { orders: 1200, defects: 14, changes: 2, keywords: "스윙 리드 버튼 걸림, 패킹 누수" },
-          "PWIKR430160": { orders: 620, defects: 9, changes: 4, keywords: "블루투스 페어링 끊김, 키캡 씹힘" },
-          "PCLKR510020": { orders: 540, defects: 1, changes: 11, keywords: "기장감 및 착용 핏 변심" },
-          "PWIKR410035": { orders: 850, defects: 1, changes: 24, keywords: "발볼 좁음, 사이즈 작음 반품" },
-          "PWIKR430051": { orders: 580, defects: 7, changes: 3, keywords: "무선 리시버 인식 지연, 키캡 유격" },
-          "PWIKR420026": { orders: 980, defects: 11, changes: 3, keywords: "C타입 단자 접촉 불량, 충전 지연" },
-          "PWIKR330018": { orders: 510, defects: 2, changes: 19, keywords: "12.9형 태블릿 수납 불가 오인" },
-          "PWIKR451099": { orders: 670, defects: 1, changes: 8, keywords: "수납 크기 예상 차이 반품" },
-          "PWIKR560158": { orders: 1150, defects: 3, changes: 2, keywords: "칼날 리턴 스프링 걸림" },
-          "PWIKR430155": { orders: 380, defects: 4, changes: 2, keywords: "포인터 튐, 클릭 센서 인식 불량" },
-          "PWIKR430157": { orders: 420, defects: 5, changes: 3, keywords: "휠 헛돎 현상, 클릭 씹힘" },
-          "PWIKR430132": { orders: 290, defects: 6, changes: 1, keywords: "버튼 뻑뻑함, 알람 음량 작음" },
-          "PCLKR910035": { orders: 430, defects: 1, changes: 14, keywords: "기장감 과다, 실물 컬러 톤 차이" },
-          "PWIKR450154": { orders: 490, defects: 3, changes: 1, keywords: "도장 까짐, 보온 밀폐력 문의" },
-          "PWIKR590003": { orders: 890, defects: 4, changes: 6, keywords: "연결고리 체결 약함, 프린팅 번짐" },
-          "PCLKR510005": { orders: 390, defects: 1, changes: 7, keywords: "소매 기장 수선 문의, 원단 두께감" },
-          "PCLKR510021": { orders: 360, defects: 1, changes: 5, keywords: "착용 핏 변심" },
-          "PWIKR450672": { orders: 520, defects: 2, changes: 3, keywords: "스트로우 누락 인입" }
-        };
-
-        SKU_MASTER_DATABASE.forEach(item => {
-          if (sampleMetrics[item.sku]) {
-            Object.assign(item, sampleMetrics[item.sku]);
-          }
-        });
       }
 
       document.getElementById('startDatePicker').value = currentStartDate;
@@ -1214,18 +753,24 @@
         return;
       }
 
+      // 커스텀 조회 시 퀵버튼 하이라이트 해제
+      document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.className = "quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition";
+      });
+
       currentStartDate = sVal;
       currentEndDate = eVal;
       renderAll();
     }
 
+    // 퀵 날짜 필터 (클릭 시 즉시 하이라이트 및 날짜 반영)
     function setQuickDateRange(rangeType) {
-      const now = new Date('2026-11-02'); 
+      const now = new Date('2026-11-03'); 
       const formatDate = (d) => d.toISOString().split('T')[0];
 
       if (rangeType === 'today') {
-        currentStartDate = formatDate(now);
-        currentEndDate = formatDate(now);
+        currentStartDate = '2026-11-03';
+        currentEndDate = '2026-11-03';
       } 
       else if (rangeType === 'lastWeek') {
         currentStartDate = '2026-10-26';
@@ -1245,7 +790,16 @@
       } 
       else if (rangeType === 'all') {
         currentStartDate = '2026-01-01';
-        currentEndDate = '2026-11-01';
+        currentEndDate = '2026-11-03';
+      }
+
+      // 버튼 UI 액티브 상태 갱신
+      document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.className = "quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition";
+      });
+      const activeBtn = document.getElementById('quickBtn-' + rangeType);
+      if (activeBtn) {
+        activeBtn.className = "quick-btn px-2.5 py-1 bg-slate-900 text-white font-bold rounded-md transition shadow-2xs";
       }
 
       document.getElementById('startDatePicker').value = currentStartDate;
@@ -1253,20 +807,17 @@
       renderAll();
     }
 
-    // 대시보드 렌더링 총괄 (날짜 선택 시 모든 차트/테이블/KPI 연동)
     function renderAll() {
       const d1 = new Date(currentStartDate);
       const d2 = new Date(currentEndDate);
       const diffTime = Math.abs(d2 - d1);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-      // 상단 배지 텍스트 갱신
       const rangeEl = document.getElementById('dateRangeText');
       const spanEl = document.getElementById('dateSpanBadge');
       if (rangeEl) rangeEl.textContent = `${currentStartDate.replace(/-/g, '.')} ~ ${currentEndDate.replace(/-/g, '.')}`;
       if (spanEl) spanEl.textContent = `${diffDays}일간`;
 
-      // 선택 기간과 교차하는 주차 필터링
       const overlappingWeeks = WEEKLY_DATA.filter(item => {
         return !(item.endDate < currentStartDate || item.startDate > currentEndDate);
       });
@@ -1347,11 +898,7 @@
           channels: { cafe24: 52.0, naver: 22.0, kakao: 12.0, cm29: 11.5, others: 2.5 },
           inboundTypes: [Math.round(estInq*0.25), Math.round(estInq*0.08), Math.round(estInq*0.06), Math.round(estInq*0.05), Math.round(estInq*0.02), Math.round(estInq*0.08)]
         };
-        prevData = {
-          orders: Math.round(estOrders * 0.9),
-          inquiries: Math.round(estInq * 0.92),
-          refunds: Math.round(estOrders * 0.016)
-        };
+        prevData = { orders: Math.round(estOrders * 0.9), inquiries: Math.round(estInq * 0.92), refunds: Math.round(estOrders * 0.016) };
       }
 
       updateKPIs(displayData, prevData);
@@ -1364,46 +911,43 @@
       updateCostCharts();
     }
 
-    // CS 탭 렌더링: TOP 5(2026 전체 고정) + SKU 상세 테이블(정렬/폴딩)
+    // [핵심] CS 탭 렌더링: 연간 11,287건 실시간 필터링 연동
     function renderCsTabContent(diffDays) {
-      // 1. 선택된 기간에 속하는 CS 로우데이터만 실시간 필터링
-      const periodLogs = CS_RAW_LOGS.filter(log => {
-        return log.date >= currentStartDate && log.date <= currentEndDate;
-      });
-
-      // 2. SKU별 집계 맵 구성
+      const logs = window.WIGGLE_CS_LOGS || [];
       const skuClaimMap = {};
       let totalPeriodDefects = 0;
       let totalPeriodChanges = 0;
 
-      // 전체 기간 누적 맵 (CS TOP 5 고정 산출용)
+      // 전체 누적 맵 (CS TOP 5 고정 산출용)
       const allTimeDefectMap = {};
 
-      CS_RAW_LOGS.forEach(log => {
-        if (!allTimeDefectMap[log.sku]) {
-          allTimeDefectMap[log.sku] = { sku: log.sku, name: log.name, defects: 0, reason: log.reason };
+      logs.forEach(l => {
+        // 1. 전체 기간 누적 집계 (2026.01.01 ~)
+        if (l.df > 0) {
+          if (!allTimeDefectMap[l.s]) allTimeDefectMap[l.s] = { defects: 0, reason: l.r || "" };
+          allTimeDefectMap[l.s].defects += l.df;
         }
-        if (log.type.includes("불량")) allTimeDefectMap[log.sku].defects += log.count;
 
-        if (log.date >= currentStartDate && log.date <= currentEndDate) {
-          if (!skuClaimMap[log.sku]) {
-            skuClaimMap[log.sku] = { defects: 0, changes: 0, reasons: [] };
+        // 2. 선택된 조회 기간 필터링 집계
+        if (l.d >= currentStartDate && l.d <= currentEndDate) {
+          if (!skuClaimMap[l.s]) {
+            skuClaimMap[l.s] = { defects: 0, changes: 0, reasons: [] };
           }
-          if (log.type.includes("불량")) {
-            skuClaimMap[log.sku].defects += log.count;
-            totalPeriodDefects += log.count;
+          if (l.df > 0) {
+            skuClaimMap[l.s].defects += l.df;
+            totalPeriodDefects += l.df;
           }
-          if (log.type.includes("변심")) {
-            skuClaimMap[log.sku].changes += log.count;
-            totalPeriodChanges += log.count;
+          if (l.cg > 0) {
+            skuClaimMap[l.s].changes += l.cg;
+            totalPeriodChanges += l.cg;
           }
-          if (log.reason && !skuClaimMap[log.sku].reasons.includes(log.reason)) {
-            skuClaimMap[log.sku].reasons.push(log.reason);
+          if (l.r && !skuClaimMap[l.s].reasons.includes(l.r)) {
+            skuClaimMap[l.s].reasons.push(l.r);
           }
         }
       });
 
-      // 3. 전체 2,426개 마스터 DB에 '선택 기간의 실측 데이터' 바인딩
+      // 3. 전체 품목에 실측 수치 바인딩
       let estimatedPeriodOrders = Math.max(100, Math.round(diffDays * 1150));
       const dynamicList = SKU_MASTER_DATABASE.map(item => {
         const claim = skuClaimMap[item.sku] || { defects: 0, changes: 0, reasons: [] };
@@ -1422,7 +966,7 @@
         };
       });
 
-      // 4. 상단 3대 KPI 카드 갱신
+      // 4. 상단 3대 KPI 카드 실측 수치 반영
       const overallDefectRate = estimatedPeriodOrders > 0 ? ((totalPeriodDefects / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
       const overallChangeRate = estimatedPeriodOrders > 0 ? ((totalPeriodChanges / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
 
@@ -1434,19 +978,19 @@
       const skuCountEl = document.getElementById('csTabTotalSkuCount');
       if (skuCountEl) skuCountEl.textContent = dynamicList.length.toLocaleString();
 
-      // 5. CS TOP 5 섹션: 2026 전체 누적 기준 (불량 건수 TOP 5 vs 불량률 TOP 5)
+      // 5. CS TOP 5 섹션: 2026 연간 누적 고정 리스트업 (불량 건수 TOP 5 vs 불량률 TOP 5)
       const fullCumulativeList = SKU_MASTER_DATABASE.map(item => {
-        const cDefects = (allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].defects : 0) || (item.defects || 0);
+        const cDefects = (allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].defects : 0);
         const cOrders = item.orders || 500;
         return {
           ...item,
           defects: cDefects,
           defectRate: cOrders > 0 ? ((cDefects / cOrders) * 100).toFixed(2) : "0.00",
-          keywords: allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].reason : (item.keywords || "-")
+          keywords: allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].reason : "-"
         };
       });
 
-      // 왼쪽: 불량 건수 TOP 5
+      // 왼쪽: 품질 불량 접수 건수 TOP 5
       const topDefectsCount = [...fullCumulativeList].sort((a, b) => b.defects - a.defects).slice(0, 5);
       document.getElementById('csTabDefectList').innerHTML = topDefectsCount.map((item, idx) => `
         <div class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer" onclick="selectSkuItem('${item.sku}')">
@@ -1469,7 +1013,7 @@
         </div>
       `).join('');
 
-      // 오른쪽: 품질 불량률 TOP 5
+      // 오른쪽: 품질 불량률(%) TOP 5
       const topDefectsRate = [...fullCumulativeList]
         .filter(i => i.orders >= 30)
         .sort((a, b) => parseFloat(b.defectRate) - parseFloat(a.defectRate))
@@ -1496,11 +1040,9 @@
         </div>
       `).join('');
 
-      // 6. 하단 테이블(정렬/폴딩) 갱신
       filterSkuTable();
     }
 
-    // 정렬 조건 변경 함수
     function changeSkuSort(sortKey) {
       currentSkuSort = sortKey;
 
@@ -1515,7 +1057,6 @@
       filterSkuTable();
     }
 
-    // 필터링 및 조건별 Sort 실행
     function filterSkuTable() {
       const query = document.getElementById('skuSearchInput').value.trim().toLowerCase();
       const cat = document.getElementById('csCategoryFilter').value;
@@ -1552,7 +1093,6 @@
       renderSkuTableRows(filtered);
     }
 
-    // 10개 단위 폴딩 렌더링
     function renderSkuTableRows(items) {
       const tbody = document.getElementById('skuTableBody');
       tbody.innerHTML = '';
@@ -1832,22 +1372,10 @@
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             scales: {
-              y: {
-                type: 'linear',
-                position: 'left',
-                grid: { color: '#F1F5F9' },
-                title: { display: true, text: '주문수 (건)', font: { size: 10 } }
-              },
-              y1: {
-                type: 'linear',
-                position: 'right',
-                grid: { drawOnChartArea: false },
-                title: { display: true, text: '인쿼리 (건)', font: { size: 10 } }
-              }
+              y: { type: 'linear', position: 'left', grid: { color: '#F1F5F9' }, title: { display: true, text: '주문수 (건)', font: { size: 10 } } },
+              y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '인쿼리 (건)', font: { size: 10 } } }
             },
-            plugins: {
-              legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
-            }
+            plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } }
           }
         });
       }
@@ -1872,31 +1400,8 @@
               borderColor: '#ffffff'
             }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '72%',
-            plugins: { legend: { display: false } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { display: false } } }
         });
-      }
-
-      const miniEl = document.getElementById('channelStatsMini');
-      if (miniEl) {
-        miniEl.innerHTML = `
-          <div>
-            <p class="text-[11px] text-slate-400">카페24</p>
-            <p class="text-xs font-bold text-slate-800">${chRef.cafe24}%</p>
-          </div>
-          <div>
-            <p class="text-[11px] text-slate-400">스토어팜</p>
-            <p class="text-xs font-bold text-slate-800">${chRef.naver}%</p>
-          </div>
-          <div>
-            <p class="text-[11px] text-slate-400">카카오</p>
-            <p class="text-xs font-bold text-slate-800">${chRef.kakao}%</p>
-          </div>
-        `;
       }
     }
 
@@ -1910,19 +1415,9 @@
           type: 'bar',
           data: {
             labels: ['제품/재입고', '상세문의', '주문/결제', '배송지변경', '교환/불량', '기타'],
-            datasets: [{
-              label: '인입 건수',
-              data: curr.inboundTypes,
-              backgroundColor: ['#6366F1', '#818CF8', '#A5B4FC', '#C7D2FE', '#F43F5E', '#CBD5E1'],
-              borderRadius: 6
-            }]
+            datasets: [{ label: '인입 건수', data: curr.inboundTypes, backgroundColor: ['#6366F1', '#818CF8', '#A5B4FC', '#C7D2FE', '#F43F5E', '#CBD5E1'], borderRadius: 6 }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { grid: { color: '#F1F5F9' } } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#F1F5F9' } } } }
         });
       }
 
@@ -1932,19 +1427,9 @@
           type: 'doughnut',
           data: {
             labels: ['단순변심 반품 (57.4%)', '제품불량 교환 (14.8%)', '변심 교환 (11.1%)', '오배송/누락 (9.3%)', '불량 반품 (5.6%)', '배송파손 (1.8%)'],
-            datasets: [{
-              data: [93, 24, 18, 15, 9, 3],
-              backgroundColor: ['#F59E0B', '#EF4444', '#FBBF24', '#3B82F6', '#F87171', '#94A3B8'],
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
+            datasets: [{ data: [93, 24, 18, 15, 9, 3], backgroundColor: ['#F59E0B', '#EF4444', '#FBBF24', '#3B82F6', '#F87171', '#94A3B8'], borderWidth: 2, borderColor: '#ffffff' }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } } }
         });
       }
     }
@@ -1956,24 +1441,9 @@
           type: 'line',
           data: {
             labels: ['9월 4주', '10월 1주', '10월 2주', '10월 3주', '10월 4주', '10월 5주'],
-            datasets: [{
-              label: 'AI 전체해결률 (%)',
-              data: [35.5, 37.2, 39.8, 41.5, 42.9, 43.1],
-              borderColor: '#6366F1',
-              backgroundColor: 'rgba(99, 102, 241, 0.12)',
-              fill: true,
-              borderWidth: 3,
-              tension: 0.3,
-              pointRadius: 5,
-              pointBackgroundColor: '#6366F1'
-            }]
+            datasets: [{ label: 'AI 전체해결률 (%)', data: [35.5, 37.2, 39.8, 41.5, 42.9, 43.1], borderColor: '#6366F1', backgroundColor: 'rgba(99, 102, 241, 0.12)', fill: true, borderWidth: 3, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#6366F1' }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { min: 30, max: 50, grid: { color: '#F1F5F9' } } },
-            plugins: { legend: { display: false } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 30, max: 50, grid: { color: '#F1F5F9' } } }, plugins: { legend: { display: false } } }
         });
       }
 
@@ -1984,26 +1454,11 @@
           data: {
             labels: ['1월', '3월', '5월', '7월', '9월', '10월'],
             datasets: [
-              {
-                label: 'AI 관여율 (%)',
-                data: [28.7, 32.4, 38.1, 42.0, 46.5, 49.1],
-                backgroundColor: '#C7D2FE',
-                borderRadius: 4
-              },
-              {
-                label: 'AI 자체해결률 (%)',
-                data: [72.1, 75.0, 80.2, 82.5, 85.9, 87.3],
-                backgroundColor: '#10B981',
-                borderRadius: 4
-              }
+              { label: 'AI 관여율 (%)', data: [28.7, 32.4, 38.1, 42.0, 46.5, 49.1], backgroundColor: '#C7D2FE', borderRadius: 4 },
+              { label: 'AI 자체해결률 (%)', data: [72.1, 75.0, 80.2, 82.5, 85.9, 87.3], backgroundColor: '#10B981', borderRadius: 4 }
             ]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { min: 0, max: 100, grid: { color: '#F1F5F9' } } },
-            plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, grid: { color: '#F1F5F9' } } }, plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } } }
         });
       }
     }
@@ -2016,49 +1471,11 @@
           data: {
             labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월'],
             datasets: [
-              {
-                label: '평균 평점 (5.0)',
-                data: [4.78, 4.80, 4.81, 4.82, 4.84, 4.85, 4.86, 4.88, 4.89, 4.87],
-                borderColor: '#F59E0B',
-                backgroundColor: '#F59E0B',
-                borderWidth: 2.5,
-                yAxisID: 'y',
-                tension: 0.2
-              },
-              {
-                label: '부정리뷰율 (%)',
-                data: [3.8, 3.5, 3.2, 3.0, 2.9, 2.8, 2.6, 2.4, 2.3, 2.47],
-                borderColor: '#EF4444',
-                backgroundColor: '#EF4444',
-                borderWidth: 2,
-                yAxisID: 'y1',
-                borderDash: [4, 4],
-                tension: 0.2
-              }
+              { label: '평균 평점 (5.0)', data: [4.78, 4.80, 4.81, 4.82, 4.84, 4.85, 4.86, 4.88, 4.89, 4.87], borderColor: '#F59E0B', backgroundColor: '#F59E0B', borderWidth: 2.5, yAxisID: 'y', tension: 0.2 },
+              { label: '부정리뷰율 (%)', data: [3.8, 3.5, 3.2, 3.0, 2.9, 2.8, 2.6, 2.4, 2.3, 2.47], borderColor: '#EF4444', backgroundColor: '#EF4444', borderWidth: 2, yAxisID: 'y1', borderDash: [4, 4], tension: 0.2 }
             ]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            scales: {
-              y: {
-                min: 4.5,
-                max: 5.0,
-                position: 'left',
-                grid: { color: '#F1F5F9' },
-                title: { display: true, text: '평점 (점)', font: { size: 10 } }
-              },
-              y1: {
-                min: 0,
-                max: 5.0,
-                position: 'right',
-                grid: { drawOnChartArea: false },
-                title: { display: true, text: '부정리뷰율 (%)', font: { size: 10 } }
-              }
-            },
-            plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { y: { min: 4.5, max: 5.0, position: 'left', grid: { color: '#F1F5F9' } }, y1: { min: 0, max: 5.0, position: 'right', grid: { drawOnChartArea: false } } }, plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } } }
         });
       }
     }
@@ -2070,24 +1487,9 @@
           type: 'bar',
           data: {
             labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월'],
-            datasets: [{
-              label: 'CS 발생비용 (천원)',
-              data: [2650, 2420, 2810, 2550, 2300, 2190, 1980, 1720, 1690, 1769],
-              backgroundColor: '#6366F1',
-              borderRadius: 6
-            }]
+            datasets: [{ label: 'CS 발생비용 (천원)', data: [2650, 2420, 2810, 2550, 2300, 2190, 1980, 1720, 1690, 1769], backgroundColor: '#6366F1', borderRadius: 6 }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                grid: { color: '#F1F5F9' },
-                ticks: { callback: v => v.toLocaleString() + '천원' }
-              }
-            },
-            plugins: { legend: { display: false } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#F1F5F9' }, ticks: { callback: v => v.toLocaleString() + '천원' } } }, plugins: { legend: { display: false } } }
         });
       }
 
@@ -2097,19 +1499,9 @@
           type: 'doughnut',
           data: {
             labels: ['불량-맞교환', '변심-반품', '불량-반품', '사고/재배송'],
-            datasets: [{
-              data: [68.3, 15.2, 9.7, 5.5],
-              backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#94A3B8'],
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
+            datasets: [{ data: [68.3, 15.2, 9.7, 5.5], backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#94A3B8'], borderWidth: 2, borderColor: '#ffffff' }]
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: { legend: { display: false } }
-          }
+          options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false } } }
         });
       }
     }
@@ -2129,31 +1521,19 @@
       try {
         const response = await fetch(`${APPS_SCRIPT_URL}?t=${new Date().getTime()}`);
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-        
         const payload = await response.json();
-        if (payload.status !== 'success') throw new Error(payload.message || '데이터 형식 오류');
+        if (payload.status !== 'success') throw new Error(payload.message || '데이터 오류');
 
-        if (payload.skuProducts && payload.skuProducts.length > 0) {
-          SKU_MASTER_DATABASE = payload.skuProducts;
-        }
-
-        if (payload.weeklyData && payload.weeklyData.length > 0) {
-          WEEKLY_DATA = payload.weeklyData;
-        }
+        if (payload.skuProducts && payload.skuProducts.length > 0) SKU_MASTER_DATABASE = payload.skuProducts;
+        if (payload.weeklyData && payload.weeklyData.length > 0) WEEKLY_DATA = payload.weeklyData;
 
         const now = new Date();
         const timeStr = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        status.innerText = `최근 동기화: ${timeStr} (${SKU_MASTER_DATABASE.length}개 품목)`;
-        status.className = 'text-[11px] text-emerald-600 font-bold';
+        status.innerText = `최근 동기화: ${timeStr}`;
         badge.innerText = '실시간 시트 반영됨';
-        badge.className = 'px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300';
-
         renderAll();
-        alert(`구글 스프레드시트에서 총 ${SKU_MASTER_DATABASE.length}개 품목 데이터가 성공적으로 반영되었습니다.`);
+        alert('구글 스프레드시트 데이터가 대시보드에 성공적으로 반영되었습니다.');
       } catch (err) {
-        console.error('동기화 실패:', err);
-        status.innerText = '최근 동기화: 2,426개 품목 로드 완료';
-        status.className = 'text-[11px] text-slate-400 font-bold';
         renderAll();
       } finally {
         btn.disabled = false;
@@ -2177,7 +1557,6 @@
         activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
         activeBtn.classList.add('bg-slate-900', 'text-white', 'shadow-xs');
       }
-
       window.dispatchEvent(new Event('resize'));
     }
   </script>
