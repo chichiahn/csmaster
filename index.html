@@ -1171,17 +1171,20 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
 
-        // 주요 불만 원인 키워드 50자 제한 및 텍스트 끝에 (더보기) 문구 추가 (호버 시 뷰포트 기준 팝업)
+                // 주요 불만 원인 키워드 120자 제한 및 클릭(Click) 시 복사/드래그 가능한 팝업 토글
         const rawKeywords = item.keywords || "-";
         let keywordContentHtml = "";
-        if (rawKeywords !== "-" && rawKeywords.length > 50) {
-          const shortText = rawKeywords.slice(0, 50) + "...";
+        if (rawKeywords !== "-" && rawKeywords.length > 120) {
+          const shortText = rawKeywords.slice(0, 120) + "...";
           const safeEncoded = encodeURIComponent(rawKeywords);
           keywordContentHtml = `
-            <span class="cursor-pointer text-slate-700 hover:text-slate-950 transition inline-block"
-                  onmouseenter="showKeywordTooltip(this, decodeURIComponent('${safeEncoded}'))"
-                  onmouseleave="hideKeywordTooltip()">
-              ${shortText} <span class="text-rose-500 font-bold text-[11px] underline decoration-rose-300 underline-offset-2 hover:text-rose-600">(더보기)</span>
+            <span class="text-slate-700 inline-block leading-relaxed">
+              ${shortText}
+              <button type="button" 
+                      class="keyword-more-btn ml-1 text-rose-500 font-bold text-xs underline decoration-rose-300 underline-offset-2 hover:text-rose-600 cursor-pointer focus:outline-none"
+                      onclick="toggleKeywordTooltip(event, this, decodeURIComponent('${safeEncoded}'))">
+                (더보기)
+              </button>
             </span>
           `;
         } else {
@@ -1707,36 +1710,54 @@
     }
   </script>
 
-  <!-- ================= GLOBAL FLOATING TOOLTIP (잘림 방지 뷰포트 기준 레이어) ================= -->
-  <div id="globalKeywordTooltip" class="hidden fixed z-[9999] w-96 max-w-[90vw] p-3.5 bg-slate-900/95 backdrop-blur-md text-white text-xs rounded-xl shadow-2xl pointer-events-none break-words leading-relaxed border border-slate-700/80 transition-all duration-150">
-    <div class="flex items-center gap-1.5 font-bold text-rose-400 mb-2 pb-1.5 border-b border-slate-700/80">
-      <i class="fa-solid fa-circle-exclamation text-xs"></i>
-      <span>불만 접수 원인 상세 전문</span>
+    <!-- ================= GLOBAL FLOATING TOOLTIP (클릭 토글 & 텍스트 복사/드래그 가능 레이어) ================= -->
+  <div id="globalKeywordTooltip" 
+       onclick="event.stopPropagation()"
+       class="hidden fixed z-[9999] w-[420px] max-w-[92vw] p-4 bg-slate-900/95 backdrop-blur-md text-white text-xs rounded-2xl shadow-2xl pointer-events-auto select-text break-words leading-relaxed border border-slate-700/80 transition-all duration-150">
+    <div class="flex items-center justify-between font-bold text-rose-400 mb-2.5 pb-2 border-b border-slate-700/80 select-none">
+      <div class="flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-exclamation text-xs"></i>
+        <span>불만 접수 원인 상세 전문</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] text-slate-400 font-normal">드래그 및 복사 가능</span>
+        <button type="button" onclick="hideKeywordTooltip()" class="text-slate-400 hover:text-white transition px-1 text-sm font-bold cursor-pointer">✕</button>
+      </div>
     </div>
-    <div id="globalKeywordTooltipContent" class="text-slate-200 text-xs max-h-56 overflow-y-auto custom-scroll whitespace-normal leading-relaxed"></div>
+    <div id="globalKeywordTooltipContent" class="text-slate-200 text-xs max-h-64 overflow-y-auto custom-scroll whitespace-normal leading-relaxed select-text cursor-text"></div>
   </div>
 
   <script>
-    function showKeywordTooltip(el, fullText) {
+    let activeKeywordButton = null;
+
+    function toggleKeywordTooltip(e, el, fullText) {
+      e.stopPropagation();
       const tooltip = document.getElementById('globalKeywordTooltip');
       const content = document.getElementById('globalKeywordTooltipContent');
       if (!tooltip || !content) return;
 
+      // 이미 열려 있는 상태에서 같은 (더보기)를 다시 누르면 닫기
+      if (!tooltip.classList.contains('hidden') && activeKeywordButton === el) {
+        hideKeywordTooltip();
+        return;
+      }
+
+      activeKeywordButton = el;
       content.textContent = fullText;
       tooltip.classList.remove('hidden');
 
       const rect = el.getBoundingClientRect();
-      const tooltipWidth = tooltip.offsetWidth || 384;
-      const tooltipHeight = tooltip.offsetHeight || 120;
+      const tooltipWidth = tooltip.offsetWidth || 420;
+      const tooltipHeight = tooltip.offsetHeight || 150;
 
-      // 좌우 위치: 요소 우측에 맞추되 화면 밖으로 나가지 않도록 조정
-      let left = rect.right - tooltipWidth;
+      // 좌우 위치: 버튼 위치 기준으로 정렬하되 화면 밖으로 이탈 방지
+      let left = rect.right - tooltipWidth + 30;
       if (left < 16) left = 16;
       if (left + tooltipWidth > window.innerWidth - 16) {
         left = window.innerWidth - tooltipWidth - 16;
       }
 
-      // 상하 위치: 위쪽 공간이 좁으면(테이블 헤더 등에 걸리면) 자동으로 아래쪽으로 표시
+      // 상하 위치: 위쪽 공간이 좁으면 아래쪽으로, 충분하면 위쪽으로 띄움
       let top;
       if (rect.top - tooltipHeight - 12 < 80) {
         top = rect.bottom + 8; // 아래쪽으로 노출
@@ -1751,7 +1772,24 @@
     function hideKeywordTooltip() {
       const tooltip = document.getElementById('globalKeywordTooltip');
       if (tooltip) tooltip.classList.add('hidden');
+      activeKeywordButton = null;
     }
+
+    // 팝업 외부의 다른 곳을 클릭하거나 ESC 키를 누르면 팝업 자동 닫기
+    document.addEventListener('click', function(e) {
+      const tooltip = document.getElementById('globalKeywordTooltip');
+      if (tooltip && !tooltip.classList.contains('hidden')) {
+        if (!tooltip.contains(e.target) && !e.target.closest('.keyword-more-btn')) {
+          hideKeywordTooltip();
+        }
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        hideKeywordTooltip();
+      }
+    });
   </script>
 </body>
 
