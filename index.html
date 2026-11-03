@@ -1238,9 +1238,11 @@
       clearBtn.classList.remove('hidden');
 
       const sourceList = (CURRENT_PERIOD_LIST.length > 0) ? CURRENT_PERIOD_LIST : SKU_MASTER_DATABASE;
-      const matched = sourceList.filter(item => 
-        item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query)
-      ).slice(0, 15);
+      // [출고건수 내림차순 정렬] 검색어와 일치하는 품목 중 선택 기간 출고량이 많은 제품부터 상단 노출
+      const matched = sourceList
+        .filter(item => item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query))
+        .sort((a, b) => (b.orders || 0) - (a.orders || 0))
+        .slice(0, 15);
 
       currentMatchedDropdownItems = matched;
 
@@ -1248,11 +1250,14 @@
         dropdown.classList.remove('hidden');
         dropdown.innerHTML = matched.map((m, idx) => `
           <div id="autocomplete-item-${idx}" onclick="selectSkuItem('${m.sku}')" onmouseenter="setDropdownHover(${idx})" class="autocomplete-item px-3.5 py-2 hover:bg-rose-50/70 transition flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">${m.sku}</span>
-              <span class="font-semibold text-slate-800">${m.name}</span>
+            <div class="flex items-center gap-2 overflow-hidden">
+              <span class="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded shrink-0">${m.sku}</span>
+              <span class="font-semibold text-slate-800 truncate">${m.name}</span>
             </div>
-            <span class="text-[10px] text-slate-400 font-medium">${m.category}</span>
+            <div class="text-right shrink-0 ml-3 flex items-center gap-2">
+              <span class="text-[11px] font-bold text-slate-800 bg-slate-100/80 px-1.5 py-0.5 rounded">출고 ${(m.orders || 0).toLocaleString()}건</span>
+              <span class="text-[10px] text-slate-400 font-medium">${m.category}</span>
+            </div>
           </div>
         `).join('');
       } else {
