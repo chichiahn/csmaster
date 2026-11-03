@@ -132,7 +132,7 @@
           </div>
         </div>
 
-        <!-- 우측: 퀵 필터 버튼군 (클릭 시 하이라이트) -->
+        <!-- 우측: 퀵 필터 버튼군 -->
         <div class="flex items-center gap-1 overflow-x-auto custom-scroll" id="quickBtnGroup">
           <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Range:</span>
           <button onclick="setQuickDateRange('today')" id="quickBtn-today" class="quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition">오늘</button>
@@ -429,44 +429,7 @@
         </div>
       </div>
 
-      <!-- 품질 불량 TOP 5 (건수 vs 불량률) 심층 섹션 [전체기간 2026.01.01 ~ 기준] -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- 품질 불량 CS 접수 TOP 5 (실제 누적 건수 기준) -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
-              <div>
-                <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량 CS 접수 TOP 5</h4>
-                <p class="text-[11px] text-slate-400">2026 연간 누적 실측 불량 건수 기준</p>
-              </div>
-            </div>
-            <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">누적 건수 기준</span>
-          </div>
-          <div id="csTabDefectList" class="divide-y divide-slate-100 text-xs sm:text-sm">
-          </div>
-        </div>
-
-        <!-- 품질 불량률 TOP 5 (출고 대비 불량률 % 기준) -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-purple-500"></span>
-              <div>
-                <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량률 TOP 5</h4>
-                <p class="text-[11px] text-slate-400">2026 연간 출고 대비 실측 불량률(%) 기준</p>
-              </div>
-            </div>
-            <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">불량률(%) 랭킹</span>
-          </div>
-          <div id="csTabDefectRateList" class="divide-y divide-slate-100 text-xs sm:text-sm">
-          </div>
-        </div>
-
-      </div>
-
-      <!-- SKU 코드 매칭 제품별 클레임/출고 상세 분석 데이터 테이블 (TOP 10 + 10개 단위 폴딩 & 정렬) -->
+      <!-- [위치 이동: 상단 배치] SKU 코드 매칭 제품별 클레임/출고 상세 분석 데이터 테이블 (TOP 10 + 10개 단위 폴딩 & 정렬) -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
@@ -524,6 +487,43 @@
             <button onclick="collapseSkuItems()" id="skuCollapseBtn" class="hidden px-3.5 py-2 bg-white hover:bg-slate-100 text-slate-600 font-bold rounded-xl border border-slate-200 transition items-center gap-1.5 cursor-pointer">
               <i class="fa-solid fa-chevron-up text-xs"></i> 처음으로 접기 (TOP 10)
             </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- [위치 이동: 하단 배치] 품질 불량 TOP 5 (건수 vs 불량률) 심층 섹션 [전체기간 2026.01.01 ~ 기준] -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- 품질 불량 CS 접수 TOP 5 (실제 누적 건수 기준) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <div>
+                <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량 CS 접수 TOP 5</h4>
+                <p class="text-[11px] text-slate-400">2026 연간 누적 실측 불량 건수 기준</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md">누적 건수 기준</span>
+          </div>
+          <div id="csTabDefectList" class="divide-y divide-slate-100 text-xs sm:text-sm">
+          </div>
+        </div>
+
+        <!-- 품질 불량률 TOP 5 (출고 대비 불량률 % 기준) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+              <div>
+                <h4 class="font-bold text-slate-800 text-sm md:text-base">품질 불량률 TOP 5</h4>
+                <p class="text-[11px] text-slate-400">2026 연간 출고 대비 실측 불량률(%) 기준</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">불량률(%) 랭킹</span>
+          </div>
+          <div id="csTabDefectRateList" class="divide-y divide-slate-100 text-xs sm:text-sm">
           </div>
         </div>
 
@@ -720,7 +720,6 @@
     let chartCostDoughnut = null;
 
     window.onload = function() {
-      // 1. 마스터 2,426개 품목 로드
       if (window.WIGGLE_ALL_PRODUCTS && window.WIGGLE_ALL_PRODUCTS.length > 0) {
         SKU_MASTER_DATABASE = window.WIGGLE_ALL_PRODUCTS.map(p => ({
           sku: p.sku,
@@ -753,7 +752,6 @@
         return;
       }
 
-      // 커스텀 조회 시 퀵버튼 하이라이트 해제
       document.querySelectorAll('.quick-btn').forEach(btn => {
         btn.className = "quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition";
       });
@@ -763,11 +761,7 @@
       renderAll();
     }
 
-    // 퀵 날짜 필터 (클릭 시 즉시 하이라이트 및 날짜 반영)
     function setQuickDateRange(rangeType) {
-      const now = new Date('2026-11-03'); 
-      const formatDate = (d) => d.toISOString().split('T')[0];
-
       if (rangeType === 'today') {
         currentStartDate = '2026-11-03';
         currentEndDate = '2026-11-03';
@@ -793,7 +787,6 @@
         currentEndDate = '2026-11-03';
       }
 
-      // 버튼 UI 액티브 상태 갱신
       document.querySelectorAll('.quick-btn').forEach(btn => {
         btn.className = "quick-btn px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-md font-medium text-slate-700 transition";
       });
@@ -911,24 +904,20 @@
       updateCostCharts();
     }
 
-    // [핵심] CS 탭 렌더링: 연간 11,287건 실시간 필터링 연동
     function renderCsTabContent(diffDays) {
       const logs = window.WIGGLE_CS_LOGS || [];
       const skuClaimMap = {};
       let totalPeriodDefects = 0;
       let totalPeriodChanges = 0;
 
-      // 전체 누적 맵 (CS TOP 5 고정 산출용)
       const allTimeDefectMap = {};
 
       logs.forEach(l => {
-        // 1. 전체 기간 누적 집계 (2026.01.01 ~)
         if (l.df > 0) {
           if (!allTimeDefectMap[l.s]) allTimeDefectMap[l.s] = { defects: 0, reason: l.r || "" };
           allTimeDefectMap[l.s].defects += l.df;
         }
 
-        // 2. 선택된 조회 기간 필터링 집계
         if (l.d >= currentStartDate && l.d <= currentEndDate) {
           if (!skuClaimMap[l.s]) {
             skuClaimMap[l.s] = { defects: 0, changes: 0, reasons: [] };
@@ -947,7 +936,6 @@
         }
       });
 
-      // 3. 전체 품목에 실측 수치 바인딩
       let estimatedPeriodOrders = Math.max(100, Math.round(diffDays * 1150));
       const dynamicList = SKU_MASTER_DATABASE.map(item => {
         const claim = skuClaimMap[item.sku] || { defects: 0, changes: 0, reasons: [] };
@@ -966,7 +954,6 @@
         };
       });
 
-      // 4. 상단 3대 KPI 카드 실측 수치 반영
       const overallDefectRate = estimatedPeriodOrders > 0 ? ((totalPeriodDefects / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
       const overallChangeRate = estimatedPeriodOrders > 0 ? ((totalPeriodChanges / estimatedPeriodOrders) * 100).toFixed(2) : "0.00";
 
@@ -978,7 +965,6 @@
       const skuCountEl = document.getElementById('csTabTotalSkuCount');
       if (skuCountEl) skuCountEl.textContent = dynamicList.length.toLocaleString();
 
-      // 5. CS TOP 5 섹션: 2026 연간 누적 고정 리스트업 (불량 건수 TOP 5 vs 불량률 TOP 5)
       const fullCumulativeList = SKU_MASTER_DATABASE.map(item => {
         const cDefects = (allTimeDefectMap[item.sku] ? allTimeDefectMap[item.sku].defects : 0);
         const cOrders = item.orders || 500;
@@ -990,7 +976,6 @@
         };
       });
 
-      // 왼쪽: 품질 불량 접수 건수 TOP 5
       const topDefectsCount = [...fullCumulativeList].sort((a, b) => b.defects - a.defects).slice(0, 5);
       document.getElementById('csTabDefectList').innerHTML = topDefectsCount.map((item, idx) => `
         <div class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer" onclick="selectSkuItem('${item.sku}')">
@@ -1013,7 +998,6 @@
         </div>
       `).join('');
 
-      // 오른쪽: 품질 불량률(%) TOP 5
       const topDefectsRate = [...fullCumulativeList]
         .filter(i => i.orders >= 30)
         .sort((a, b) => parseFloat(b.defectRate) - parseFloat(a.defectRate))
@@ -1475,7 +1459,7 @@
               { label: '부정리뷰율 (%)', data: [3.8, 3.5, 3.2, 3.0, 2.9, 2.8, 2.6, 2.4, 2.3, 2.47], borderColor: '#EF4444', backgroundColor: '#EF4444', borderWidth: 2, yAxisID: 'y1', borderDash: [4, 4], tension: 0.2 }
             ]
           },
-          options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { y: { min: 4.5, max: 5.0, position: 'left', grid: { color: '#F1F5F9' } }, y1: { min: 0, max: 5.0, position: 'right', grid: { drawOnChartArea: false } } }, plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } } }
+          options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { y: { min: 4.5, max: 5.0, position: 'left', grid: { color: '#F1F5F9' }, title: { display: true, text: '평점 (점)', font: { size: 10 } } }, y1: { min: 0, max: 5.0, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '부정리뷰율 (%)', font: { size: 10 } } } }, plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } } }
         });
       }
     }
