@@ -1171,25 +1171,18 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
 
-        // 주요 불만 원인 키워드 50자 제한 및 마우스 호버(Hover) 시 팝업 툴팁 표시
+        // 주요 불만 원인 키워드 50자 제한 및 텍스트 끝에 (더보기) 문구 추가 (호버 시 뷰포트 기준 팝업)
         const rawKeywords = item.keywords || "-";
         let keywordContentHtml = "";
         if (rawKeywords !== "-" && rawKeywords.length > 50) {
           const shortText = rawKeywords.slice(0, 50) + "...";
-          const safeFull = rawKeywords.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+          const safeEncoded = encodeURIComponent(rawKeywords);
           keywordContentHtml = `
-            <div class="relative group inline-block max-w-lg text-left">
-              <span class="text-slate-600 text-xs">${shortText}</span>
-              <button type="button" class="ml-1 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded hover:bg-rose-100 transition cursor-pointer">더보기</button>
-              <!-- 마우스 호버 시 뜨는 팝업 레이어 (마우스 치우면 자동 사라짐) -->
-              <div class="hidden group-hover:block absolute right-0 bottom-full mb-2 w-96 p-3.5 bg-slate-900/95 backdrop-blur-sm text-white text-xs rounded-xl shadow-2xl z-50 pointer-events-none break-words leading-relaxed border border-slate-700">
-                <div class="flex items-center gap-1.5 font-bold text-rose-400 mb-1.5 pb-1 border-b border-slate-700">
-                  <i class="fa-solid fa-circle-exclamation text-xs"></i>
-                  <span>불만 접수 원인 상세 전문</span>
-                </div>
-                <div class="text-slate-200 text-xs max-h-56 overflow-y-auto custom-scroll whitespace-normal">${safeFull}</div>
-              </div>
-            </div>
+            <span class="cursor-pointer text-slate-700 hover:text-slate-950 transition inline-block"
+                  onmouseenter="showKeywordTooltip(this, decodeURIComponent('${safeEncoded}'))"
+                  onmouseleave="hideKeywordTooltip()">
+              ${shortText} <span class="text-rose-500 font-bold text-[11px] underline decoration-rose-300 underline-offset-2 hover:text-rose-600">(더보기)</span>
+            </span>
           `;
         } else {
           keywordContentHtml = `<span class="text-slate-400 text-xs">${rawKeywords}</span>`;
@@ -1713,5 +1706,53 @@
       window.dispatchEvent(new Event('resize'));
     }
   </script>
+
+  <!-- ================= GLOBAL FLOATING TOOLTIP (잘림 방지 뷰포트 기준 레이어) ================= -->
+  <div id="globalKeywordTooltip" class="hidden fixed z-[9999] w-96 max-w-[90vw] p-3.5 bg-slate-900/95 backdrop-blur-md text-white text-xs rounded-xl shadow-2xl pointer-events-none break-words leading-relaxed border border-slate-700/80 transition-all duration-150">
+    <div class="flex items-center gap-1.5 font-bold text-rose-400 mb-2 pb-1.5 border-b border-slate-700/80">
+      <i class="fa-solid fa-circle-exclamation text-xs"></i>
+      <span>불만 접수 원인 상세 전문</span>
+    </div>
+    <div id="globalKeywordTooltipContent" class="text-slate-200 text-xs max-h-56 overflow-y-auto custom-scroll whitespace-normal leading-relaxed"></div>
+  </div>
+
+  <script>
+    function showKeywordTooltip(el, fullText) {
+      const tooltip = document.getElementById('globalKeywordTooltip');
+      const content = document.getElementById('globalKeywordTooltipContent');
+      if (!tooltip || !content) return;
+
+      content.textContent = fullText;
+      tooltip.classList.remove('hidden');
+
+      const rect = el.getBoundingClientRect();
+      const tooltipWidth = tooltip.offsetWidth || 384;
+      const tooltipHeight = tooltip.offsetHeight || 120;
+
+      // 좌우 위치: 요소 우측에 맞추되 화면 밖으로 나가지 않도록 조정
+      let left = rect.right - tooltipWidth;
+      if (left < 16) left = 16;
+      if (left + tooltipWidth > window.innerWidth - 16) {
+        left = window.innerWidth - tooltipWidth - 16;
+      }
+
+      // 상하 위치: 위쪽 공간이 좁으면(테이블 헤더 등에 걸리면) 자동으로 아래쪽으로 표시
+      let top;
+      if (rect.top - tooltipHeight - 12 < 80) {
+        top = rect.bottom + 8; // 아래쪽으로 노출
+      } else {
+        top = rect.top - tooltipHeight - 8; // 위쪽으로 노출
+      }
+
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    }
+
+    function hideKeywordTooltip() {
+      const tooltip = document.getElementById('globalKeywordTooltip');
+      if (tooltip) tooltip.classList.add('hidden');
+    }
+  </script>
 </body>
+
 </html>
