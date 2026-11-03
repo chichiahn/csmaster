@@ -451,15 +451,15 @@
           <table class="w-full text-left text-xs sm:text-sm">
             <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 sticky top-0 z-10">
               <tr>
-                <th class="py-3 px-4">SKU 코드</th>
-                <th class="py-3 px-4">대표 상품명</th>
-                <th class="py-3 px-4">카테고리</th>
-                <th class="py-3 px-4 text-right cursor-pointer hover:text-slate-900" onclick="changeSkuSort('orders')">출고수량 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></th>
-                <th class="py-3 px-4 text-right cursor-pointer hover:text-slate-900" onclick="changeSkuSort('defects')">품질불량 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></th>
-                <th class="py-3 px-4 text-right cursor-pointer hover:text-slate-900" onclick="changeSkuSort('defectRate')">불량률 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></th>
-                <th class="py-3 px-4 text-right cursor-pointer hover:text-slate-900" onclick="changeSkuSort('changes')">단순변심 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></th>
-                <th class="py-3 px-4 text-right cursor-pointer hover:text-slate-900" onclick="changeSkuSort('changeRate')">변심률 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></th>
-                <th class="py-3 px-4">주요 불만 원인 키워드</th>
+                <th class="py-3 px-4 text-center">SKU 코드</th>
+                <th class="py-3 px-4 text-center">대표 상품명</th>
+                <th class="py-3 px-4 text-center">카테고리</th>
+                <th class="py-3 px-4 text-center cursor-pointer hover:text-slate-900 transition" onclick="changeSkuSort('orders')"><div class="inline-flex items-center justify-center gap-1">출고수량 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></div></th>
+                <th class="py-3 px-4 text-center cursor-pointer hover:text-slate-900 transition" onclick="changeSkuSort('defects')"><div class="inline-flex items-center justify-center gap-1">품질불량 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></div></th>
+                <th class="py-3 px-4 text-center cursor-pointer hover:text-slate-900 transition" onclick="changeSkuSort('defectRate')"><div class="inline-flex items-center justify-center gap-1">불량률 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></div></th>
+                <th class="py-3 px-4 text-center cursor-pointer hover:text-slate-900 transition" onclick="changeSkuSort('changes')"><div class="inline-flex items-center justify-center gap-1">단순변심 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></div></th>
+                <th class="py-3 px-4 text-center cursor-pointer hover:text-slate-900 transition" onclick="changeSkuSort('changeRate')"><div class="inline-flex items-center justify-center gap-1">변심률 <i class="fa-solid fa-sort text-[10px] text-slate-400"></i></div></th>
+                <th class="py-3 px-4 text-center">주요 불만 원인 키워드</th>
               </tr>
             </thead>
             <tbody id="skuTableBody" class="divide-y divide-slate-100 text-slate-700">
@@ -1170,16 +1170,41 @@
       renderSlice.forEach(item => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+
+        // 주요 불만 원인 키워드 50자 제한 및 마우스 호버(Hover) 시 팝업 툴팁 표시
+        const rawKeywords = item.keywords || "-";
+        let keywordContentHtml = "";
+        if (rawKeywords !== "-" && rawKeywords.length > 50) {
+          const shortText = rawKeywords.slice(0, 50) + "...";
+          const safeFull = rawKeywords.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+          keywordContentHtml = `
+            <div class="relative group inline-block max-w-lg text-left">
+              <span class="text-slate-600 text-xs">${shortText}</span>
+              <button type="button" class="ml-1 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded hover:bg-rose-100 transition cursor-pointer">더보기</button>
+              <!-- 마우스 호버 시 뜨는 팝업 레이어 (마우스 치우면 자동 사라짐) -->
+              <div class="hidden group-hover:block absolute right-0 bottom-full mb-2 w-96 p-3.5 bg-slate-900/95 backdrop-blur-sm text-white text-xs rounded-xl shadow-2xl z-50 pointer-events-none break-words leading-relaxed border border-slate-700">
+                <div class="flex items-center gap-1.5 font-bold text-rose-400 mb-1.5 pb-1 border-b border-slate-700">
+                  <i class="fa-solid fa-circle-exclamation text-xs"></i>
+                  <span>불만 접수 원인 상세 전문</span>
+                </div>
+                <div class="text-slate-200 text-xs max-h-56 overflow-y-auto custom-scroll whitespace-normal">${safeFull}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          keywordContentHtml = `<span class="text-slate-400 text-xs">${rawKeywords}</span>`;
+        }
+
         tr.innerHTML = `
-          <td class="py-3 px-4 font-mono font-bold text-slate-800 text-xs">${item.sku}</td>
+          <td class="py-3 px-4 font-mono font-bold text-slate-800 text-xs text-center">${item.sku}</td>
           <td class="py-3 px-4 font-bold text-slate-900">${item.name}</td>
-          <td class="py-3 px-4 text-slate-500">${item.category}</td>
+          <td class="py-3 px-4 text-slate-500 text-center">${item.category}</td>
           <td class="py-3 px-4 text-right font-medium text-slate-700">${item.orders.toLocaleString()}건</td>
           <td class="py-3 px-4 text-right font-bold text-rose-600">${item.defects}건</td>
           <td class="py-3 px-4 text-right font-semibold text-rose-600">${item.defectRate}%</td>
           <td class="py-3 px-4 text-right font-bold text-amber-600">${item.changes}건</td>
           <td class="py-3 px-4 text-right font-semibold text-amber-600">${item.changeRate}%</td>
-          <td class="py-3 px-4 text-slate-400 text-xs">${item.keywords}</td>
+          <td class="py-3 px-4 text-slate-500 text-xs">${keywordContentHtml}</td>
         `;
         tbody.appendChild(tr);
       });
